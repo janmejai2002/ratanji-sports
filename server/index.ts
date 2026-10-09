@@ -73,10 +73,21 @@ const cwdDist = path.resolve(process.cwd(), 'dist');
 const localDist = path.resolve(__dirname, '../dist');
 const distPath = fs.existsSync(cwdDist) ? cwdDist : localDist;
 
+// Explicit friendly redirects for documentation
+app.get(['/guide', '/manual', '/docs', '/docs/guide'], (_req, res) => {
+  res.redirect('/docs/sports-committee-guide.html');
+});
+
+// Also serve public directory as static backup
+const publicDir = path.resolve(process.cwd(), 'public');
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+}
+
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
+    if (req.path.startsWith('/api') || req.path.startsWith('/docs')) return next();
     res.sendFile(path.resolve(distPath, 'index.html'));
   });
 }
