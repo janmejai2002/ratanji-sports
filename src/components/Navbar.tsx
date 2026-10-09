@@ -303,12 +303,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {/* Guide PDF Link */}
+          {/* Guide HTML Manual Link */}
           <a
-            href="/docs/sports-committee-guide.pdf"
+            href="/docs/sports-committee-guide.html"
             target="_blank"
             rel="noopener noreferrer"
-            title="Download Sports Committee Operational Guide (PDF)"
+            title="Read Sports Committee Operational Guide (HTML Manual)"
             className={`p-2 rounded-xl border font-bold flex items-center gap-1.5 text-xs transition-all active:scale-95 ${
               sunlightMode
                 ? 'bg-slate-100 text-[#013B83] border-slate-300 hover:bg-slate-200 shadow-sm'

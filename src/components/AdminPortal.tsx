@@ -415,20 +415,34 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
         {/* Global Committee Actions */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Download Official Guide PDF */}
+          {/* Official Guide Links: HTML Manual and PDF */}
+          <a
+            href="/docs/sports-committee-guide.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-1 md:flex-none py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 ${
+              sunlightMode
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 shadow-sm'
+                : 'border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300'
+            }`}
+            title="Read the official Sports Committee Operational Manual online (HTML)"
+          >
+            <FileText className="w-3.5 h-3.5 text-emerald-500" />
+            Guide (HTML)
+          </a>
           <a
             href="/docs/sports-committee-guide.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className={`flex-1 md:flex-none py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 ${
               sunlightMode
-                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                : 'border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300'
+                ? 'border-slate-300 bg-slate-100 text-slate-800 hover:bg-slate-200 shadow-sm'
+                : 'border-slate-700 bg-slate-800/60 hover:bg-slate-700 text-slate-300'
             }`}
-            title="Download the official Sports Committee Operational Manual & Master Guide (PDF)"
+            title="Download the official Sports Committee Operational Manual as PDF"
           >
-            <FileText className="w-3.5 h-3.5 text-emerald-500" />
-            Guide (PDF)
+            <FileText className="w-3.5 h-3.5 text-slate-400" />
+            PDF
           </a>
 
           {/* Add Sport Button */}
