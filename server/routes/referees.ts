@@ -171,10 +171,7 @@ refereesRouter.post('/login', (req: Request, res: Response) => {
       }
     }
 
-    // Default fallback to ref-1 if code is generic or starts with REF-
-    if (!user && (cleanCode.startsWith('REF-') || query === 'referee' || query === 'umpire')) {
-      user = db.queryOne<any>("SELECT * FROM users WHERE UPPER(role) = 'REFEREE' LIMIT 1");
-    }
+
 
     if (!user) {
       return res.status(404).json({

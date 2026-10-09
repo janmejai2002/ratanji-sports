@@ -13,13 +13,18 @@ export function seedDatabase(dbInput: DatabaseSync | DatabaseClient | any, optio
   // Ensure foreign keys are active
   db.exec('PRAGMA foreign_keys = ON;');
 
-  if (options.clean) {
+  if (options.clean || options.cleanOnly) {
     db.exec(`
       DELETE FROM audit_logs;
       DELETE FROM match_events;
       DELETE FROM matches;
       DELETE FROM standings;
       DELETE FROM players;
+    `);
+  }
+
+  if (options.clean) {
+    db.exec(`
       DELETE FROM users;
       DELETE FROM sports;
       DELETE FROM cohorts;
@@ -311,8 +316,10 @@ export function seedDatabase(dbInput: DatabaseSync | DatabaseClient | any, optio
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
-  for (const p of [...seniorPlayers, ...juniorPlayers]) {
-    insertPlayer.run(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], JSON.stringify(p[9]));
+  if (!options.cleanOnly) {
+    for (const p of [...seniorPlayers, ...juniorPlayers]) {
+      insertPlayer.run(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], JSON.stringify(p[9]));
+    }
   }
 
   // If cleanOnly is requested, initialize clean 0-0 standings and skip mock matches/events/audits

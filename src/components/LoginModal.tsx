@@ -81,12 +81,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   initialTab = 'referee',
 }) => {
   const [tab, setTab] = useState<'referee' | 'committee'>(initialTab);
-  const [refereeCode, setRefereeCode] = useState('REF-023');
+  const [refereeCode, setRefereeCode] = useState('');
   const [refereesList, setRefereesList] = useState<any[]>(REFEREE_PRESETS);
 
   // Committee credentials
-  const [email, setEmail] = useState('admin@xlri.edu');
-  const [password, setPassword] = useState('xlri-admin-2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -298,80 +298,27 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 </div>
               </div>
 
-              {/* 1-Click Referee Roster Picker */}
-              <div className="space-y-2">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
-                  Or 1-Click Pick Certified Referee:
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {refereesList.slice(0, 3).map((ref) => {
-                    const isSelected = refereeCode.toUpperCase() === ref.code?.toUpperCase();
-                    return (
-                      <button
-                        key={ref.id || ref.code}
-                        type="button"
-                        onClick={() => {
-                          sounds.playClick();
-                          setRefereeCode(ref.code);
-                          handleRefereeLogin(ref.code);
-                        }}
-                        className={`text-left p-3 rounded-xl border transition flex flex-col justify-between active:scale-95 ${
-                          isSelected
-                            ? 'bg-emerald-950/60 border-emerald-400 ring-1 ring-emerald-400'
-                            : 'bg-black/30 border-slate-800 hover:border-slate-700'
-                        }`}
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-mono font-black text-emerald-400">
-                              {ref.code}
-                            </span>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                          </div>
-                          <div className="text-xs font-black text-white">{ref.name}</div>
-                          <div className="text-[10px] text-slate-400 truncate">
-                            {ref.sport_specialty || ref.specialty || 'Official'}
-                          </div>
-                        </div>
-                        <div className="mt-2 text-[10px] text-emerald-300 font-bold flex items-center gap-1">
-                          Score Assigned &rarr;
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+              {/* Official notice */}
+              <div className="p-3.5 rounded-xl bg-black/30 border border-slate-800 text-[11px] text-slate-400">
+                Official field credentials are issued by the XLRI Sports Committee. For access disputes or ID reissuance, visit the Committee Desk at the Main Sports Complex.
               </div>
             </div>
           )}
 
           {/* TAB 2: SPORTS COMMITTEE ADMIN */}
           {tab === 'committee' && (
-            <div className="space-y-5">
-              {/* 1-Click Committee Executive Pass */}
-              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider flex items-center gap-1">
-                    <Shield className="w-3.5 h-3.5" />
-                    Sports Committee Master Pass
-                  </span>
-                  <div className="text-sm font-black text-white mt-0.5">
-                    Sports Committee Admin Executive
-                  </div>
-                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
-                    User: <strong className="text-amber-300">admin@xlri.edu</strong> &bull; Pass: <strong className="text-emerald-400">xlri-admin-2026</strong>
-                  </div>
+            <div className="space-y-4">
+              <div
+                className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${
+                  sunlightMode
+                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    : 'bg-amber-500/10 border-amber-500/30 text-amber-200'
+                }`}
+              >
+                <Shield className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                  <span className="font-bold">Sports Committee Console:</span> Authorized executives sign in with their university committee credentials to manage fixtures, assign referees, and certify official scores.
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleCommitteeLogin()}
-                  disabled={isLoading}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
-                >
-                  <UserCheck className="w-4 h-4" />
-                  1-Click Admin Sign In
-                </button>
               </div>
 
               {/* Manual Committee Credentials Form */}

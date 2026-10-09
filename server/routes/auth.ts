@@ -69,45 +69,7 @@ authRouter.get('/users', (_req: Request, res: Response) => {
   res.json(Array.from(map.values()));
 });
 
-/**
- * POST /api/auth/switch
- * Simulated login / role switch returning credentials for headers.
- */
-authRouter.post('/switch', (req: Request, res: Response) => {
-  const { role: rawRole, userId } = req.body || {};
-  const role = normalizeRole(rawRole);
 
-  if (!role) {
-    res.status(400).json({
-      error: "Invalid role. Must be 'admin', 'referee', or 'spectator'",
-      code: 'BAD_REQUEST',
-    });
-    return;
-  }
-
-  const id = typeof userId === 'string' && userId.trim() !== ''
-    ? userId.trim()
-    : `${role}-1`;
-
-  const db = getDatabase();
-  ensureUserExists(db, id, role);
-  const dbUser = db.queryOne<any>('SELECT * FROM users WHERE id = ?', [id]);
-
-  res.json({
-    success: true,
-    user: {
-      id,
-      role,
-      name: dbUser?.name || `${role.toUpperCase()} (${id})`,
-      email: dbUser?.email || `${id.toLowerCase()}@sports.xlridelhi.ac.in`,
-    },
-    headers: {
-      'x-user-role': role,
-      'x-user-id': id,
-    },
-    permissions: ROLE_PERMISSIONS[role],
-  });
-});
 
 /**
  * GET /api/auth/roles
@@ -235,14 +197,3 @@ authRouter.post('/login', (req: Request, res: Response) => {
   });
 });
 
-/**
- * GET /api/auth/credentials
- * Returns the shareable credentials cheat sheet and network link for demo sharing.
- */
-authRouter.get('/credentials', (_req: Request, res: Response) => {
-  res.json({
-    accounts: PREDEFINED_ACCOUNTS,
-    shareLink: 'http://10.1.57.20:5173',
-    localLink: 'http://localhost:5173',
-  });
-});
