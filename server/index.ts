@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(authMiddleware);
 
 // Basic health check endpoint
-app.get('/api/health', (_req, res) => {
+app.get(['/api/health', '/healthz', '/health'], (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
