@@ -28,6 +28,30 @@ describe('Role-Based Access Control (RBAC)', () => {
     expect([401, 403]).toContain(res.status);
   });
 
+  it('Public Spectator cannot add, edit, or delete athletes (401/403 Forbidden)', async () => {
+    const addRes = await api.post('/api/contingent/players', {
+      name: 'Unauthorized Athlete',
+      primary_sport_id: 'sport-football',
+      cohort_id: 'cohort-seniors',
+    }, SPECTATOR_HEADERS);
+    expect([401, 403]).toContain(addRes.status);
+
+    const editRes = await api.put('/api/contingent/players/ply-26bm001', {
+      name: 'Hacked Name',
+    }, SPECTATOR_HEADERS);
+    expect([401, 403]).toContain(editRes.status);
+
+    const delRes = await api.delete('/api/contingent/players/ply-26bm001', SPECTATOR_HEADERS);
+    expect([401, 403]).toContain(delRes.status);
+  });
+
+  it('Public Spectator cannot add new sports (401/403 Forbidden)', async () => {
+    const res = await api.post('/api/sports', {
+      name: 'Unauthorized Sport',
+    }, SPECTATOR_HEADERS);
+    expect([401, 403]).toContain(res.status);
+  });
+
   it('Anonymous user without headers cannot perform mutations', async () => {
     const res = await api.post('/api/matches', {
       sport_id: 'football',

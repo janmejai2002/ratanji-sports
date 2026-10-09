@@ -12,7 +12,10 @@ export async function setup() {
       signal: AbortSignal.timeout(500),
     });
     if (res.ok) {
-      console.log('[Test Setup] Reusing existing server listening on :3001');
+      console.log('[Test Setup] Reusing existing server listening on :3001 - Re-seeding database...');
+      const dbClient = getDatabase();
+      initSchema(dbClient);
+      seedDatabase(dbClient, { clean: true });
       return;
     }
   } catch {}

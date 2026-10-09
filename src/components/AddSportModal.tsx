@@ -65,7 +65,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
       <div
         className={`w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 shadow-2xl relative transition-all pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
           sunlightMode
-            ? 'bg-white border-slate-900 text-slate-950'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
             : 'bg-slate-900 border-amber-500/40 text-slate-100'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -74,7 +74,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
         <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mb-3 sm:hidden" />
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+          className={`absolute top-4 right-4 p-1.5 rounded-lg transition ${sunlightMode ? 'hover:bg-slate-100 text-slate-400 hover:text-slate-700' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
         >
           <X className="w-4 h-4" />
         </button>
@@ -88,7 +88,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
           Add New Sports Event
         </h3>
 
-        <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+        <p className={`text-xs mb-4 leading-relaxed ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
           Configure a new sporting event for Ratanjee 2026. It will automatically become available for scheduling, scoring, and contingent rosters.
         </p>
 
@@ -100,7 +100,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           <div>
-            <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+            <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
               Sport Event Name
             </label>
             <input
@@ -109,19 +109,27 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
               placeholder="e.g. Squash, Kabaddi, Powerlifting, Kho Kho"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+              className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                sunlightMode
+                  ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                  : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+              }`}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+              <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                }`}
               >
                 <option value="Court">Court</option>
                 <option value="Outdoor">Outdoor</option>
@@ -134,13 +142,17 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
             </div>
 
             <div>
-              <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+              <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Scoring Rule Engine
               </label>
               <select
                 value={scoringType}
                 onChange={(e) => setScoringType(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                }`}
               >
                 <option value="GENERIC">Points &amp; Sets (Standard)</option>
                 <option value="FOOTBALL">Football / Futsal (Goals/Cards)</option>
@@ -153,7 +165,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
 
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <label className="font-bold uppercase text-[9px] text-slate-400 block mb-1">
+              <label className={`font-bold uppercase text-[9px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Players / Team
               </label>
               <input
@@ -161,12 +173,16 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
                 min="1"
                 value={playersPerTeam}
                 onChange={(e) => setPlayersPerTeam(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none font-mono text-center"
+                className={`w-full px-2.5 py-1.5 rounded-lg outline-none font-mono text-center font-bold ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                }`}
               />
             </div>
 
             <div>
-              <label className="font-bold uppercase text-[9px] text-slate-400 block mb-1">
+              <label className={`font-bold uppercase text-[9px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Duration (Min)
               </label>
               <input
@@ -174,12 +190,16 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
                 min="5"
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none font-mono text-center"
+                className={`w-full px-2.5 py-1.5 rounded-lg outline-none font-mono text-center font-bold ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                }`}
               />
             </div>
 
             <div>
-              <label className="font-bold uppercase text-[9px] text-slate-400 block mb-1">
+              <label className={`font-bold uppercase text-[9px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Points to Win
               </label>
               <input
@@ -187,7 +207,11 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
                 min="1"
                 value={pointsToWin}
                 onChange={(e) => setPointsToWin(e.target.value)}
-                className="w-full px-2.5 py-1.5 rounded-lg bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none font-mono text-center"
+                className={`w-full px-2.5 py-1.5 rounded-lg outline-none font-mono text-center font-bold ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                }`}
               />
             </div>
           </div>

@@ -141,7 +141,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
 
     sounds.playClick();
     const tempId = 'b-' + Date.now();
-    const author = banterBatch === 'Senior' ? 'Senior Fan (BM 26)' : 'Junior Fan (HRM 27)';
+    const author = banterBatch === 'Senior' ? 'Senior Supporter' : 'Junior Supporter';
     const text = banterInput.trim();
     const newItem: BanterItem = {
       id: tempId,
@@ -309,46 +309,74 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           </div>
 
           {/* Minimalist Executive Scoreboard */}
-          <div className="p-4 rounded-xl bg-slate-950/70 border border-white/[0.06] flex items-center justify-between gap-3 mb-3 shadow-inner">
-            {/* Home (Seniors '26) */}
+          <div className={`p-4 rounded-xl border flex items-center justify-between gap-3 mb-3 ${
+            sunlightMode
+              ? 'bg-[#013B83]/[0.03] border-[#013B83]/10 shadow-sm'
+              : 'bg-slate-950/70 border-white/[0.06] shadow-inner'
+          }`}>
+            {/* Home (Seniors) */}
             <div className="flex-1 text-center min-w-0">
-              <span className="text-[11px] font-bold text-blue-400 block uppercase tracking-wider truncate mb-1">
-                {m.home_cohort_name || "Seniors '26"}
+              <span className={`text-[11px] font-bold block uppercase tracking-wider truncate mb-1 ${
+                sunlightMode ? 'text-[#013B83]' : 'text-blue-400'
+              }`}>
+                {m.home_cohort_name || "Seniors"}
               </span>
-              <span className="tabular-score-num text-3xl sm:text-4xl font-extrabold text-blue-400">
+              <span className={`tabular-score-num text-3xl sm:text-4xl font-extrabold ${
+                sunlightMode ? 'text-[#013B83]' : 'text-blue-400'
+              }`}>
                 {m.score_home ?? 0}
               </span>
             </div>
 
             {/* Match State / Clock Capsule */}
-            <div className="flex flex-col items-center justify-center px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
-              <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
+            <div className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-lg border ${
+              sunlightMode
+                ? 'bg-white border-slate-200 shadow-sm'
+                : 'bg-white/[0.03] border-white/5'
+            }`}>
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-widest ${
+                sunlightMode ? 'text-slate-700' : 'text-slate-400'
+              }`}>
                 {isLive ? (
                   m.current_time_seconds ? `${Math.floor(m.current_time_seconds / 60)}'` : 'LIVE'
                 ) : isCompleted ? (
-                  'FULL TIME'
+                  'FINAL'
                 ) : (
                   'VS'
                 )}
               </span>
             </div>
 
-            {/* Away (Juniors '27) */}
+            {/* Away (Juniors) */}
             <div className="flex-1 text-center min-w-0">
-              <span className="text-[11px] font-bold text-emerald-400 block uppercase tracking-wider truncate mb-1">
-                {m.away_cohort_name || "Juniors '27"}
+              <span className={`text-[11px] font-bold block uppercase tracking-wider truncate mb-1 ${
+                sunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+              }`}>
+                {m.away_cohort_name || "Juniors"}
               </span>
-              <span className="tabular-score-num text-3xl sm:text-4xl font-extrabold text-emerald-400">
+              <span className={`tabular-score-num text-3xl sm:text-4xl font-extrabold ${
+                sunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+              }`}>
                 {m.score_away ?? 0}
               </span>
             </div>
           </div>
 
           {/* In-Game Win Probability Micro-Telemetry (Data Science Engine) */}
-          <div className="mb-3.5 px-3 py-2 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-            <div className="flex items-center justify-between text-[10px] font-mono mb-1 text-slate-400">
-              <span className="text-blue-400 font-bold">Seniors {winOdds.homePct}%</span>
-              <span className="flex items-center gap-1 text-[9px] uppercase tracking-wider text-slate-400">
+          <div className={`mb-3.5 px-3 py-2 rounded-lg border ${
+            sunlightMode
+              ? 'bg-slate-50/80 border-slate-200'
+              : 'bg-white/[0.02] border-white/[0.05]'
+          }`}>
+            <div className={`flex items-center justify-between text-[10px] font-mono mb-1 ${
+              sunlightMode ? 'text-slate-600' : 'text-slate-400'
+            }`}>
+              <span className={`font-bold ${sunlightMode ? 'text-[#013B83]' : 'text-blue-400'}`}>
+                Seniors {winOdds.homePct}%
+              </span>
+              <span className={`flex items-center gap-1 text-[9px] uppercase tracking-wider ${
+                sunlightMode ? 'text-slate-500' : 'text-slate-400'
+              }`}>
                 Win Probability
                 <InfoTooltip
                   title="Bayesian Win Probability Model"
@@ -363,22 +391,28 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   sunlightMode={sunlightMode}
                 />
               </span>
-              <span className="text-emerald-400 font-bold">{winOdds.awayPct}% Juniors</span>
+              <span className={`font-bold ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
+                {winOdds.awayPct}% Juniors
+              </span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden flex">
-              <div style={{ width: `${winOdds.homePct}%` }} className="bg-blue-500 transition-all duration-300" />
-              <div style={{ width: `${winOdds.awayPct}%` }} className="bg-emerald-500 transition-all duration-300" />
+            <div className={`w-full h-1.5 rounded-full overflow-hidden flex ${
+              sunlightMode ? 'bg-slate-200' : 'bg-slate-800'
+            }`}>
+              <div style={{ width: `${winOdds.homePct}%` }} className={`${sunlightMode ? 'bg-[#013B83]' : 'bg-blue-500'} transition-all duration-300`} />
+              <div style={{ width: `${winOdds.awayPct}%` }} className={`${sunlightMode ? 'bg-emerald-600' : 'bg-emerald-500'} transition-all duration-300`} />
             </div>
           </div>
 
           {/* Venue & Fixture Details */}
-          <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono mb-3.5">
+          <div className={`flex items-center justify-between text-[11px] font-mono mb-3.5 ${
+            sunlightMode ? 'text-slate-500' : 'text-slate-400'
+          }`}>
             <div className="flex items-center gap-1.5 truncate max-w-[210px]">
-              <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <MapPin className={`w-3.5 h-3.5 shrink-0 ${sunlightMode ? 'text-slate-400' : 'text-slate-500'}`} />
               <span className="truncate">{m.venue || 'XLRI Grounds'}</span>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              <Clock className="w-3.5 h-3.5 text-amber-400/80" />
+              <Clock className={`w-3.5 h-3.5 ${sunlightMode ? 'text-amber-600' : 'text-amber-400/80'}`} />
               <span>
                 {m.current_time_seconds ? `${Math.floor(m.current_time_seconds / 60)}' min` : 'Scheduled'}
               </span>
@@ -387,7 +421,9 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
         </div>
 
         {/* Action Buttons: Analytics, WhatsApp Share & Viral Brag Card */}
-        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/[0.08]">
+        <div className={`grid grid-cols-3 gap-2 pt-3 border-t ${
+          sunlightMode ? 'border-slate-200' : 'border-white/[0.08]'
+        }`}>
           <button
             type="button"
             onClick={() => {
@@ -395,10 +431,14 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
               mobileHaptics.tap();
               setSelectedMatchForAnalytics(m);
             }}
-            className="py-2 px-2 rounded-xl bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/30 text-blue-300 font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors"
+            className={`py-2 px-2 rounded-xl border font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors ${
+              sunlightMode
+                ? 'bg-[#013B83]/10 hover:bg-[#013B83]/15 border-[#013B83]/20 text-[#013B83]'
+                : 'bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/30 text-blue-300'
+            }`}
             title="Open Sports Data Science & Analytics Insights"
           >
-            <BarChart3 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            <BarChart3 className={`w-3.5 h-3.5 shrink-0 ${sunlightMode ? 'text-[#013B83]' : 'text-blue-400'}`} />
             <span className="truncate">Analytics</span>
           </button>
 
@@ -409,10 +449,14 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
               mobileHaptics.tap();
               setSelectedMatchForShare(m);
             }}
-            className="py-2 px-2 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300 font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors"
+            className={`py-2 px-2 rounded-xl border font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors ${
+              sunlightMode
+                ? 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-800'
+                : 'bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300'
+            }`}
             title="Share live scorecard to WhatsApp groups"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`} />
             <span className="truncate">Share</span>
           </button>
 
@@ -423,10 +467,14 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
               mobileHaptics.tap();
               setSelectedMatchForViral(m);
             }}
-            className="py-2 px-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200 font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors"
+            className={`py-2 px-2 rounded-xl border font-semibold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-colors ${
+              sunlightMode
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800'
+                : 'bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200'
+            }`}
             title="Generate viral campus brag card"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <Sparkles className={`w-3.5 h-3.5 shrink-0 ${sunlightMode ? 'text-amber-600' : 'text-amber-400'}`} />
             <span className="truncate">Brag Card</span>
           </button>
         </div>
@@ -440,21 +488,31 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
       <div
         className={`p-5 rounded-2xl border flex flex-col md:flex-row items-center justify-between gap-4 transition-colors ${
           sunlightMode
-            ? 'bg-white border-slate-300 shadow-sm'
+            ? 'bg-white border-slate-200 shadow-sm'
             : 'bg-slate-900/70 border-white/[0.08] shadow-xl backdrop-blur-md'
         }`}
       >
         <div className="flex items-center gap-3.5 w-full md:w-auto">
-          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-            <Trophy className="w-5 h-5 text-amber-400" />
+          <div
+            className={`p-2 rounded-xl border flex items-center justify-center shrink-0 ${
+              sunlightMode
+                ? 'bg-white border-slate-200 shadow-sm'
+                : 'bg-white/[0.04] border-white/10'
+            }`}
+          >
+            <img src="/xlri-shield-logo.png" alt="XLRI Logo" className="w-7 h-7 object-contain" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-1.5">
-                XLRI DELHI ANNUAL SPORTS FESTIVAL 2026
+              <h2
+                className={`text-base sm:text-lg font-black tracking-tight flex items-center gap-1.5 ${
+                  sunlightMode ? 'text-[#013B83]' : 'text-white'
+                }`}
+              >
+                RATANJEE
                 <InfoTooltip
-                  title="Ratanjee Memorial Trophy 2026"
-                  content="Annual inter-batch sports championship between Batch of 2026 (Seniors) and Batch of 2027 (Juniors) across 15+ disciplines."
+                  title="Ratanjee Memorial Trophy"
+                  content="Official annual inter-batch championship between Seniors and Juniors across 15+ disciplines."
                   features={[
                     "15+ sanctioned sporting disciplines including Football, Basketball, Cricket, and Racquet sports",
                     "Official real-time officiating with sub-second event-sourcing integrity",
@@ -463,24 +521,42 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   sunlightMode={sunlightMode}
                 />
               </h2>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                LIVE FESTIVAL
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                  sunlightMode
+                    ? 'bg-[#013B83]/10 text-[#013B83] border-[#013B83]/20 font-mono'
+                    : 'bg-amber-500/15 text-amber-400 border-amber-500/30 font-mono'
+                }`}
+              >
+                CHAMPIONSHIP
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5 flex-wrap mt-0.5">
-              <span>Championship Leaderboard:</span>
-              <span className="text-blue-400 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
+            <p
+              className={`text-xs flex items-center gap-1.5 flex-wrap mt-0.5 ${
+                sunlightMode ? 'text-slate-600' : 'text-slate-400'
+              }`}
+            >
+              <span>Leaderboard:</span>
+              <span
+                className={`font-bold flex items-center gap-1 ${
+                  sunlightMode ? 'text-[#013B83]' : 'text-blue-400'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full inline-block ${sunlightMode ? 'bg-[#013B83]' : 'bg-blue-400'}`} />
                 Seniors {Array.isArray(standings) ? (standings.find((s: any) => s.cohort_id === 'cohort-seniors' || s.cohort_name === 'Seniors')?.total_points ?? 0) : 0} Pts
               </span>
-              <span className="text-slate-600">&bull;</span>
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+              <span className={sunlightMode ? 'text-slate-400' : 'text-slate-600'}>&bull;</span>
+              <span
+                className={`font-bold flex items-center gap-1 ${
+                  sunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full inline-block ${sunlightMode ? 'bg-emerald-700' : 'bg-emerald-400'}`} />
                 Juniors {Array.isArray(standings) ? (standings.find((s: any) => s.cohort_id === 'cohort-juniors' || s.cohort_name === 'Juniors')?.total_points ?? 0) : 0} Pts
               </span>
               <InfoTooltip
                 title="Championship Points & Tiebreaker Protocol"
-                content="Points allocation and tie-breaking methodology governing the official Ratanjee 2026 standings table."
+                content="Points allocation and tie-breaking methodology governing the official Ratanjee standings table."
                 features={[
                   "Match Win: 3 Championship Points",
                   "Match Draw: 1 Championship Point",
@@ -496,7 +572,11 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
         </div>
 
         {/* Clean Sub-View Tabs Switcher */}
-        <div className="flex items-center p-1 rounded-xl bg-black/40 border border-white/[0.08] gap-1 w-full md:w-auto">
+        <div
+          className={`flex items-center p-1 rounded-xl border gap-1 w-full md:w-auto ${
+            sunlightMode ? 'bg-slate-100 border-slate-200' : 'bg-black/40 border-white/[0.08]'
+          }`}
+        >
           <button
             onClick={() => {
               sounds.playClick();
@@ -504,11 +584,15 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
             }}
             className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95 ${
               subTab === 'matches'
-                ? 'bg-white text-slate-950 font-bold shadow-sm'
+                ? sunlightMode
+                  ? 'bg-[#013B83] text-white font-bold shadow-sm'
+                  : 'bg-white text-slate-950 font-bold shadow-sm'
+                : sunlightMode
+                ? 'text-slate-600 hover:text-[#013B83]'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Activity className="w-3.5 h-3.5 text-amber-500" />
+            <Activity className={`w-3.5 h-3.5 ${sunlightMode && subTab === 'matches' ? 'text-amber-300' : 'text-amber-500'}`} />
             Live &amp; Fixtures ({liveMatches.length + pinnedMatches.length})
           </button>
 
@@ -519,11 +603,15 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
             }}
             className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95 ${
               subTab === 'standings'
-                ? 'bg-white text-slate-950 font-bold shadow-sm'
+                ? sunlightMode
+                  ? 'bg-[#013B83] text-white font-bold shadow-sm'
+                  : 'bg-white text-slate-950 font-bold shadow-sm'
+                : sunlightMode
+                ? 'text-slate-600 hover:text-[#013B83]'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Trophy className="w-3.5 h-3.5 text-amber-500" />
+            <Trophy className={`w-3.5 h-3.5 ${sunlightMode && subTab === 'standings' ? 'text-amber-300' : 'text-amber-500'}`} />
             Standings
           </button>
 
@@ -534,11 +622,15 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
             }}
             className={`flex-1 md:flex-none px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95 ${
               subTab === 'banter'
-                ? 'bg-white text-slate-950 font-bold shadow-sm'
+                ? sunlightMode
+                  ? 'bg-[#013B83] text-white font-bold shadow-sm'
+                  : 'bg-white text-slate-950 font-bold shadow-sm'
+                : sunlightMode
+                ? 'text-slate-600 hover:text-[#013B83]'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Flame className="w-3.5 h-3.5 text-amber-500" />
+            <Flame className={`w-3.5 h-3.5 ${sunlightMode && subTab === 'banter' ? 'text-amber-300' : 'text-amber-500'}`} />
             Campus Hype
           </button>
         </div>
@@ -608,7 +700,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {/* SECTION 1: Active Live Matches Now */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-black text-sm uppercase tracking-wide flex items-center gap-2 text-white">
+              <h3 className={`font-black text-sm uppercase tracking-wide flex items-center gap-2 ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping" />
                 Live Now On Court &amp; Field
                 <InfoTooltip
@@ -617,13 +709,13 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   sunlightMode={sunlightMode}
                 />
               </h3>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className={`text-xs font-mono ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                 {liveMatches.length} Live Matches
               </span>
             </div>
 
             {liveMatches.length === 0 ? (
-              <div className="p-8 rounded-2xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
+              <div className={`p-8 rounded-2xl border border-dashed text-center text-xs ${sunlightMode ? 'border-slate-300 text-slate-500 bg-white' : 'border-slate-800 text-slate-500'}`}>
                 No active live matches in this filter right now. Check scheduled fixtures below.
               </div>
             ) : (
@@ -636,8 +728,8 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {/* SECTION 2: Upcoming Scheduled Fixtures */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-sm uppercase tracking-wide flex items-center gap-2 text-white">
-                <Calendar className="w-4 h-4 text-amber-400" />
+              <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>
+                <Calendar className="w-4 h-4 text-amber-500" />
                 Up Next &bull; Scheduled Fixtures
                 <InfoTooltip
                   title="Official Match Schedule"
@@ -696,13 +788,19 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                         </div>
 
                         <div className="text-xs font-semibold mb-3 flex items-center gap-1.5 flex-wrap">
-                          <span className="text-blue-400 font-bold">{m.home_cohort_name || "Seniors '26"}</span>
-                          <span className="text-slate-500 text-[11px] font-normal">vs</span>
-                          <span className="text-emerald-400 font-bold">{m.away_cohort_name || "Juniors '27"}</span>
+                          <span className={`font-bold ${sunlightMode ? 'text-[#013B83]' : 'text-blue-400'}`}>
+                            {m.home_cohort_name || "Seniors"}
+                          </span>
+                          <span className={`text-[11px] font-normal ${sunlightMode ? 'text-slate-400' : 'text-slate-500'}`}>vs</span>
+                          <span className={`font-bold ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
+                            {m.away_cohort_name || "Juniors"}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono border-t border-white/5 pt-2.5">
+                      <div className={`flex items-center justify-between text-[11px] font-mono border-t pt-2.5 ${
+                        sunlightMode ? 'border-slate-200 text-slate-500' : 'border-white/5 text-slate-400'
+                      }`}>
                         <span className="truncate max-w-[120px]">{m.venue || 'Sports Complex'}</span>
                         <div className="flex items-center gap-2">
                           <button
@@ -712,7 +810,9 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                               mobileHaptics.tap();
                               setSelectedMatchForAnalytics(m);
                             }}
-                            className="text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 text-[11px] transition-colors"
+                            className={`font-semibold flex items-center gap-1 text-[11px] transition-colors ${
+                              sunlightMode ? 'text-[#013B83] hover:text-[#013B83]/80' : 'text-blue-400 hover:text-blue-300'
+                            }`}
                             title="Simulate Win Odds & Matchup Telemetry"
                           >
                             <BarChart3 className="w-3 h-3" />
@@ -721,7 +821,9 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                           <button
                             type="button"
                             onClick={() => setSelectedMatchForShare(m)}
-                            className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 text-[11px] transition-colors"
+                            className={`font-semibold flex items-center gap-1 text-[11px] transition-colors ${
+                              sunlightMode ? 'text-emerald-700 hover:text-emerald-800' : 'text-emerald-400 hover:text-emerald-300'
+                            }`}
                             title="Share fixture"
                           >
                             <MessageSquare className="w-3 h-3" />
@@ -740,11 +842,11 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {completedMatches.length > 0 && (
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
-                <h3 className="font-black text-sm uppercase tracking-wide flex items-center gap-2 text-white">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <h3 className={`font-black text-sm uppercase tracking-wide flex items-center gap-2 ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   Recent Concluded Results &bull; Verified
                 </h3>
-                <span className="text-xs text-slate-400 font-mono">
+                <span className={`text-xs font-mono ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                   {completedMatches.length} Matches Completed
                 </span>
               </div>
@@ -762,17 +864,21 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
         <div
           className={`p-5 rounded-2xl border shadow-xl transition-all ${
             sunlightMode
-              ? 'bg-white border-slate-300 shadow-sm'
+              ? 'bg-white border-slate-200 shadow-sm'
               : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
           }`}
         >
-          <div className="flex items-center justify-between mb-4 border-b border-white/[0.08] pb-3.5">
+          <div className={`flex items-center justify-between mb-4 border-b pb-3.5 ${
+            sunlightMode ? 'border-slate-200' : 'border-white/[0.08]'
+          }`}>
             <div>
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white flex items-center gap-2">
+              <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${
+                sunlightMode ? 'text-[#013B83]' : 'text-white'
+              }`}>
                 Official Championship Leaderboard
                 <InfoTooltip
                   title="Championship Standings Criteria"
-                  content="Standings automatically compute from verified match results ratified by the Sports Committee. Cohort points directly decide the Ratanjee Memorial Trophy 2026."
+                  content="Standings automatically compute from verified match results ratified by the Sports Committee. Cohort points directly decide the Ratanjee Memorial Trophy."
                   features={[
                     "Win = 3 points, Draw = 1 point, Loss = 0 points",
                     "Head-to-head outcomes serve as the primary tiebreaker",
@@ -782,18 +888,20 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   sunlightMode={sunlightMode}
                 />
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className={`text-xs mt-0.5 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                 Points formula: Win = 3 pts &bull; Draw = 1 pt &bull; Loss = 0 pts. Head-to-head tiebreaker active.
               </p>
             </div>
-            <Trophy className="w-5 h-5 text-amber-400" />
+            <Trophy className={`w-5 h-5 ${sunlightMode ? 'text-amber-600' : 'text-amber-400'}`} />
           </div>
 
           {/* Desktop Table View (>= 768px) */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-white/[0.08] text-[10px] font-mono uppercase text-slate-400">
+                <tr className={`border-b text-[10px] font-mono uppercase ${
+                  sunlightMode ? 'border-slate-200 text-slate-500' : 'border-white/[0.08] text-slate-400'
+                }`}>
                   <th className="py-3 px-3">Rank &bull; Cohort</th>
                   <th className="py-3 px-3 text-center">Played</th>
                   <th className="py-3 px-3 text-center">W</th>
@@ -820,33 +928,57 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   <th className="py-3 px-3 text-right">Points</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.05] font-mono">
+              <tbody className={`divide-y font-mono ${sunlightMode ? 'divide-slate-100' : 'divide-white/[0.05]'}`}>
                 {(Array.isArray(standings) && standings.length > 0 ? standings : [
-                  { cohort_name: 'Seniors (Batch of 2026)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-seniors' },
-                  { cohort_name: 'Juniors (Batch of 2027)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-juniors' },
+                  { cohort_name: 'Seniors', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-seniors' },
+                  { cohort_name: 'Juniors', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-juniors' },
                 ]).map((s: any, idx: number) => {
                   const isSenior = s.cohort_id === 'cohort-seniors' || String(s.cohort_name || s.cohort).includes('Senior');
                   return (
                     <tr
                       key={s.cohort_id || idx}
-                      className={isSenior ? 'bg-blue-500/[0.03] hover:bg-blue-500/[0.06] transition-colors' : 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-colors'}
+                      className={
+                        isSenior
+                          ? sunlightMode
+                            ? 'bg-[#013B83]/[0.03] hover:bg-[#013B83]/[0.06] transition-colors'
+                            : 'bg-blue-500/[0.03] hover:bg-blue-500/[0.06] transition-colors'
+                          : sunlightMode
+                          ? 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-colors'
+                          : 'bg-emerald-500/[0.03] hover:bg-emerald-500/[0.06] transition-colors'
+                      }
                     >
-                      <td className="py-3.5 px-3 font-semibold text-white flex items-center gap-2.5">
-                        <span className={`w-5 h-5 rounded-full ${idx === 0 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-bold'} text-[10px] flex items-center justify-center shrink-0`}>
+                      <td className={`py-3.5 px-3 font-semibold flex items-center gap-2.5 ${
+                        sunlightMode ? 'text-slate-900' : 'text-white'
+                      }`}>
+                        <span className={`w-5 h-5 rounded-full ${
+                          idx === 0
+                            ? 'bg-amber-400 text-slate-950 font-black'
+                            : sunlightMode
+                            ? 'bg-slate-200 text-slate-700 font-bold'
+                            : 'bg-slate-800 text-slate-300 font-bold'
+                        } text-[10px] flex items-center justify-center shrink-0`}>
                           {idx + 1}
                         </span>
-                        <span className={`font-sans font-bold ${isSenior ? 'text-blue-400' : 'text-emerald-400'}`}>
-                          {s.cohort_name || s.name || (isSenior ? 'Seniors (Batch of 2026)' : 'Juniors (Batch of 2027)')}
+                        <span className={`font-sans font-bold ${
+                          isSenior
+                            ? sunlightMode ? 'text-[#013B83]' : 'text-blue-400'
+                            : sunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+                        }`}>
+                          {isSenior ? 'Seniors' : 'Juniors'}
                         </span>
                       </td>
-                      <td className="py-3.5 px-3 text-center text-slate-300">{s.played ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-emerald-400 font-bold">{s.won ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-slate-400">{s.drawn ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-rose-400">{s.lost ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-slate-300">{s.points_for ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-slate-300">{s.points_against ?? 0}</td>
-                      <td className="py-3.5 px-3 text-center text-slate-300 font-semibold">{s.points_diff ?? 0}</td>
-                      <td className={`py-3.5 px-3 text-right font-black ${idx === 0 ? 'text-amber-400' : 'text-slate-300'} text-base`}>
+                      <td className={`py-3.5 px-3 text-center ${sunlightMode ? 'text-slate-700' : 'text-slate-300'}`}>{s.played ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center font-bold ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>{s.won ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>{s.drawn ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center ${sunlightMode ? 'text-rose-700' : 'text-rose-400'}`}>{s.lost ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center ${sunlightMode ? 'text-slate-700' : 'text-slate-300'}`}>{s.points_for ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center ${sunlightMode ? 'text-slate-700' : 'text-slate-300'}`}>{s.points_against ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-center font-semibold ${sunlightMode ? 'text-slate-900' : 'text-slate-300'}`}>{s.points_diff ?? 0}</td>
+                      <td className={`py-3.5 px-3 text-right font-black ${
+                        idx === 0
+                          ? sunlightMode ? 'text-amber-600' : 'text-amber-400'
+                          : sunlightMode ? 'text-slate-900' : 'text-slate-300'
+                      } text-base`}>
                         {s.total_points ?? 0}
                       </td>
                     </tr>
@@ -859,51 +991,79 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {/* Mobile Responsive Cards View (< 768px) */}
           <div className="md:hidden space-y-3">
             {(Array.isArray(standings) && standings.length > 0 ? standings : [
-              { cohort_name: 'Seniors (Batch of 2026)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-seniors' },
-              { cohort_name: 'Juniors (Batch of 2027)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-juniors' },
+              { cohort_name: 'Seniors', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-seniors' },
+              { cohort_name: 'Juniors', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-juniors' },
             ]).map((s: any, idx: number) => {
               const isSenior = s.cohort_id === 'cohort-seniors' || String(s.cohort_name || s.cohort).includes('Senior');
               return (
                 <div
                   key={s.cohort_id || idx}
                   className={`p-4 rounded-xl border ${
-                    isSenior ? 'bg-blue-500/[0.04] border-blue-500/20' : 'bg-emerald-500/[0.04] border-emerald-500/20'
+                    isSenior
+                      ? sunlightMode
+                        ? 'bg-[#013B83]/[0.03] border-[#013B83]/20'
+                        : 'bg-blue-500/[0.04] border-blue-500/20'
+                      : sunlightMode
+                      ? 'bg-emerald-500/[0.03] border-emerald-500/20'
+                      : 'bg-emerald-500/[0.04] border-emerald-500/20'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className={`w-5 h-5 rounded-full ${idx === 0 ? 'bg-amber-400 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-bold'} text-[10px] flex items-center justify-center shrink-0`}>
+                      <span className={`w-5 h-5 rounded-full ${
+                        idx === 0
+                          ? 'bg-amber-400 text-slate-950 font-black'
+                          : sunlightMode
+                          ? 'bg-slate-200 text-slate-700 font-bold'
+                          : 'bg-slate-800 text-slate-300 font-bold'
+                      } text-[10px] flex items-center justify-center shrink-0`}>
                         {idx + 1}
                       </span>
-                      <span className={`font-bold text-xs uppercase ${isSenior ? 'text-blue-400' : 'text-emerald-400'}`}>
-                        {s.cohort_name || (isSenior ? 'Seniors (Batch of 2026)' : 'Juniors (Batch of 2027)')}
+                      <span className={`font-bold text-xs uppercase ${
+                        isSenior
+                          ? sunlightMode ? 'text-[#013B83]' : 'text-blue-400'
+                          : sunlightMode ? 'text-emerald-700' : 'text-emerald-400'
+                      }`}>
+                        {isSenior ? 'Seniors' : 'Juniors'}
                       </span>
                     </div>
-                    <span className="text-base font-black font-mono text-amber-400">
+                    <span className={`text-base font-black font-mono ${
+                      sunlightMode ? 'text-amber-600' : 'text-amber-400'
+                    }`}>
                       {s.total_points ?? 0} PTS
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2 pt-2 border-t border-white/5 text-center font-mono">
-                    <div className="p-2 rounded-lg bg-black/30 border border-white/5">
-                      <span className="text-[9px] uppercase text-slate-500 block">Played</span>
-                      <span className="text-xs font-bold text-slate-200">{s.played ?? 0}</span>
+                  <div className={`grid grid-cols-4 gap-2 pt-2 border-t text-center font-mono ${
+                    sunlightMode ? 'border-slate-200' : 'border-white/5'
+                  }`}>
+                    <div className={`p-2 rounded-lg border ${
+                      sunlightMode ? 'bg-white border-slate-200' : 'bg-black/30 border-white/5'
+                    }`}>
+                      <span className={`text-[9px] uppercase block ${sunlightMode ? 'text-slate-500' : 'text-slate-500'}`}>Played</span>
+                      <span className={`text-xs font-bold ${sunlightMode ? 'text-slate-900' : 'text-slate-200'}`}>{s.played ?? 0}</span>
                     </div>
-                    <div className="p-2 rounded-lg bg-black/30 border border-white/5">
-                      <span className="text-[9px] uppercase text-slate-500 block">W-D-L</span>
-                      <span className="text-xs font-bold text-emerald-400">
+                    <div className={`p-2 rounded-lg border ${
+                      sunlightMode ? 'bg-white border-slate-200' : 'bg-black/30 border-white/5'
+                    }`}>
+                      <span className={`text-[9px] uppercase block ${sunlightMode ? 'text-slate-500' : 'text-slate-500'}`}>W-D-L</span>
+                      <span className={`text-xs font-bold ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
                         {s.won ?? 0}-{s.drawn ?? 0}-{s.lost ?? 0}
                       </span>
                     </div>
-                    <div className="p-2 rounded-lg bg-black/30 border border-white/5">
-                      <span className="text-[9px] uppercase text-slate-500 block">PF/PA</span>
-                      <span className="text-xs font-bold text-slate-300">
+                    <div className={`p-2 rounded-lg border ${
+                      sunlightMode ? 'bg-white border-slate-200' : 'bg-black/30 border-white/5'
+                    }`}>
+                      <span className={`text-[9px] uppercase block ${sunlightMode ? 'text-slate-500' : 'text-slate-500'}`}>PF/PA</span>
+                      <span className={`text-xs font-bold ${sunlightMode ? 'text-slate-700' : 'text-slate-300'}`}>
                         {s.points_for ?? 0}/{s.points_against ?? 0}
                       </span>
                     </div>
-                    <div className="p-2 rounded-lg bg-black/30 border border-white/5">
-                      <span className="text-[9px] uppercase text-slate-500 block">Diff</span>
-                      <span className="text-xs font-bold text-slate-200">{s.points_diff ?? 0}</span>
+                    <div className={`p-2 rounded-lg border ${
+                      sunlightMode ? 'bg-white border-slate-200' : 'bg-black/30 border-white/5'
+                    }`}>
+                      <span className={`text-[9px] uppercase block ${sunlightMode ? 'text-slate-500' : 'text-slate-500'}`}>Diff</span>
+                      <span className={`text-xs font-bold ${sunlightMode ? 'text-slate-900' : 'text-slate-200'}`}>{s.points_diff ?? 0}</span>
                     </div>
                   </div>
                 </div>
@@ -919,38 +1079,46 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {/* Tug of War Cheer Meter */}
           <div
             className={`p-5 rounded-2xl border shadow-xl ${
-              sunlightMode ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
+              sunlightMode
+                ? 'bg-white border-slate-200 shadow-sm'
+                : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white flex items-center gap-2">
-                <Flame className="w-4 h-4 text-amber-500" />
+              <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${
+                sunlightMode ? 'text-[#013B83]' : 'text-white'
+              }`}>
+                <Flame className={`w-4 h-4 ${sunlightMode ? 'text-amber-600' : 'text-amber-500'}`} />
                 Live Campus Cheer Tug-of-War
                 <InfoTooltip
                   title="Campus Cheer Telemetry"
                   align="left"
-                  content="Live spectator sentiment meter capturing cheering velocity from across the XLRI Delhi sports festival."
+                  content="Live spectator sentiment meter capturing cheering velocity across campus."
                   features={[
-                    "Each tap increments your batch cheer count by +12",
+                    "Each tap increments your cohort cheer count by +12",
                     "Spam-throttled to maintain genuine student sentiment",
-                    "Resets daily during festival closing ceremony"
+                    "Resets daily during tournament closing ceremony"
                   ]}
                   sunlightMode={sunlightMode}
                 />
               </h3>
-              <span className="text-xs font-mono text-slate-400">{totalHype} Total Cheers</span>
+              <span className={`text-xs font-mono ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                {totalHype} Total Cheers
+              </span>
             </div>
 
-            <div className="w-full h-4 rounded-full overflow-hidden flex bg-slate-800/80 mb-4 border border-white/10 relative">
+            <div className={`w-full h-4 rounded-full overflow-hidden flex mb-4 border relative ${
+              sunlightMode ? 'bg-slate-200 border-slate-300' : 'bg-slate-800/80 border-white/10'
+            }`}>
               <div
                 style={{ width: `${seniorHypePct}%` }}
-                className="bg-blue-600 transition-all duration-300 flex items-center justify-start pl-2.5 text-[9px] font-bold text-white font-mono"
+                className={`${sunlightMode ? 'bg-[#013B83]' : 'bg-blue-600'} transition-all duration-300 flex items-center justify-start pl-2.5 text-[9px] font-bold text-white font-mono`}
               >
                 {seniorHypePct}%
               </div>
               <div
                 style={{ width: `${juniorHypePct}%` }}
-                className="bg-emerald-600 transition-all duration-300 flex items-center justify-end pr-2.5 text-[9px] font-bold text-white font-mono"
+                className={`${sunlightMode ? 'bg-emerald-600' : 'bg-emerald-600'} transition-all duration-300 flex items-center justify-end pr-2.5 text-[9px] font-bold text-white font-mono`}
               >
                 {juniorHypePct}%
               </div>
@@ -960,16 +1128,24 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
             <div className="flex items-center justify-between gap-3">
               <button
                 onClick={() => triggerHype('Senior')}
-                className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                className={`flex-1 py-3 rounded-xl font-bold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 ${
+                  sunlightMode
+                    ? 'bg-[#013B83] hover:bg-[#013B83]/90 text-white'
+                    : 'bg-blue-600 hover:bg-blue-500 text-white'
+                }`}
               >
-                Cheer Seniors '26 (+12)
+                Cheer Seniors (+12)
               </button>
 
               <button
                 onClick={() => triggerHype('Junior')}
-                className="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                className={`flex-1 py-3 rounded-xl font-bold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 ${
+                  sunlightMode
+                    ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                }`}
               >
-                Cheer Juniors '27 (+12)
+                Cheer Juniors (+12)
               </button>
             </div>
           </div>
@@ -977,53 +1153,71 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           {/* Banter Wall Stream */}
           <div
             className={`p-5 rounded-2xl border flex flex-col gap-4 shadow-xl ${
-              sunlightMode ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
+              sunlightMode
+                ? 'bg-white border-slate-200 shadow-sm'
+                : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
             }`}
           >
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-              <h3 className="font-bold text-sm uppercase tracking-wide text-white flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-amber-500" />
+            <div className={`flex items-center justify-between border-b pb-3 ${
+              sunlightMode ? 'border-slate-200' : 'border-white/[0.08]'
+            }`}>
+              <h3 className={`font-bold text-sm uppercase tracking-wide flex items-center gap-2 ${
+                sunlightMode ? 'text-[#013B83]' : 'text-white'
+              }`}>
+                <MessageSquare className={`w-4 h-4 ${sunlightMode ? 'text-amber-600' : 'text-amber-500'}`} />
                 Inter-Batch Banter Wall
                 <InfoTooltip
                   title="Campus Banter Wall"
                   align="left"
-                  content="Real-time public message wall for friendly inter-batch sports banter, match predictions, and athlete shoutouts."
+                  content="Real-time public message wall for friendly inter-cohort sports banter, match predictions, and athlete shoutouts."
                   features={[
-                    "Tagged by batch cohort (Senior BM '26 vs Junior HRM '27)",
+                    "Tagged by cohort (Seniors vs Juniors)",
                     "Live emoji reactions update across connected devices",
                     "Subject to XLRI Delhi student code of conduct"
                   ]}
                   sunlightMode={sunlightMode}
                 />
               </h3>
-              <span className="text-xs font-mono text-slate-400">Live Campus Stream</span>
+              <span className={`text-xs font-mono ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                Live Campus Stream
+              </span>
             </div>
 
             {/* Post Banter Box */}
             <form onSubmit={handlePostBanter} className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-slate-400 font-semibold text-[11px]">Post as:</span>
+                <span className={`font-semibold text-[11px] ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Post as:
+                </span>
                 <button
                   type="button"
                   onClick={() => setBanterBatch('Senior')}
                   className={`px-3 py-1 rounded-lg font-semibold text-xs transition-colors ${
                     banterBatch === 'Senior'
-                      ? 'bg-blue-600 text-white shadow-sm'
+                      ? sunlightMode
+                        ? 'bg-[#013B83] text-white shadow-sm'
+                        : 'bg-blue-600 text-white shadow-sm'
+                      : sunlightMode
+                      ? 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
                       : 'bg-white/5 text-slate-400 hover:text-white'
                   }`}
                 >
-                  Senior (BM 26)
+                  Seniors
                 </button>
                 <button
                   type="button"
                   onClick={() => setBanterBatch('Junior')}
                   className={`px-3 py-1 rounded-lg font-semibold text-xs transition-colors ${
                     banterBatch === 'Junior'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? sunlightMode
+                        ? 'bg-emerald-700 text-white shadow-sm'
+                        : 'bg-emerald-600 text-white shadow-sm'
+                      : sunlightMode
+                      ? 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
                       : 'bg-white/5 text-slate-400 hover:text-white'
                   }`}
                 >
-                  Junior (HRM 27)
+                  Juniors
                 </button>
               </div>
 
@@ -1032,12 +1226,20 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                   type="text"
                   value={banterInput}
                   onChange={(e) => setBanterInput(e.target.value)}
-                  placeholder="Drop spicy campus banter or support your batch athletes..."
-                  className="flex-1 px-4 py-2.5 rounded-xl border bg-slate-950/80 border-white/10 text-white text-xs outline-none focus:border-amber-400/80 focus:ring-1 focus:ring-amber-400/50 transition-all placeholder:text-slate-500"
+                  placeholder="Drop campus banter or support your cohort athletes..."
+                  className={`flex-1 px-4 py-2.5 rounded-xl border text-xs outline-none transition-all ${
+                    sunlightMode
+                      ? 'bg-slate-50 border-slate-200 text-slate-900 focus:border-[#013B83] focus:ring-1 focus:ring-[#013B83]/30 placeholder:text-slate-400'
+                      : 'bg-slate-950/80 border-white/10 text-white focus:border-amber-400/80 focus:ring-1 focus:ring-amber-400/50 placeholder:text-slate-500'
+                  }`}
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+                  className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all ${
+                    sunlightMode
+                      ? 'bg-[#013B83] hover:bg-[#013B83]/90 text-white'
+                      : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
+                  }`}
                 >
                   <Send className="w-3.5 h-3.5" />
                   Post

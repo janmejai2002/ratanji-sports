@@ -24,7 +24,8 @@ import {
   Activity,
   Lock,
   RotateCcw,
-  UserCheck
+  UserCheck,
+  FileText
 } from 'lucide-react';
 import { sounds } from '../utils/audio';
 import { api } from '../utils/api';
@@ -388,7 +389,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       {/* Sports Committee Header & Action Suite */}
       <div
         className={`p-5 rounded-2xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-colors ${
-          sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900/90 border-slate-800'
+          sunlightMode ? 'bg-white border-slate-200/90 shadow-sm' : 'bg-slate-900/90 border-slate-800'
         }`}
       >
         <div className="flex items-center gap-3">
@@ -414,6 +415,22 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
         {/* Global Committee Actions */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          {/* Download Official Guide PDF */}
+          <a
+            href="/docs/sports-committee-guide.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-1 md:flex-none py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 ${
+              sunlightMode
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                : 'border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300'
+            }`}
+            title="Download the official Sports Committee Operational Manual & Master Guide (PDF)"
+          >
+            <FileText className="w-3.5 h-3.5 text-emerald-500" />
+            Guide (PDF)
+          </a>
+
           {/* Add Sport Button */}
           <button
             onClick={() => {
@@ -470,35 +487,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       {/* Metrics Banner */}
       <div
         className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 p-4 rounded-2xl border ${
-          sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900/90 border-slate-800'
+          sunlightMode ? 'bg-white border-slate-200/90 shadow-sm' : 'bg-slate-900/90 border-slate-800'
         }`}
       >
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span className="text-[11px] font-bold text-slate-400 block">Senior Squad</span>
-          <span className="text-2xl font-black font-mono text-blue-400">{contingentSummary.seniorCount}</span>
+        <div className={`p-3 rounded-xl border ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'}`}>
+          <span className={`text-[11px] font-bold block ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>Senior Squad</span>
+          <span className={`text-2xl font-black font-mono ${sunlightMode ? 'text-[#013B83]' : 'text-blue-400'}`}>{contingentSummary.seniorCount}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span className="text-[11px] font-bold text-slate-400 block">Junior Squad</span>
-          <span className="text-2xl font-black font-mono text-emerald-400">{contingentSummary.juniorCount}</span>
+        <div className={`p-3 rounded-xl border ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'}`}>
+          <span className={`text-[11px] font-bold block ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>Junior Squad</span>
+          <span className={`text-2xl font-black font-mono ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>{contingentSummary.juniorCount}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span className="text-[11px] font-bold text-red-400 block flex items-center gap-1">
+        <div className={`p-3 rounded-xl border ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'}`}>
+          <span className="text-[11px] font-bold text-red-500 block flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             Live Matches
           </span>
-          <span className="text-2xl font-black font-mono text-red-400">{liveMatches.length}</span>
+          <span className="text-2xl font-black font-mono text-red-500">{liveMatches.length}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span className="text-[11px] font-bold text-amber-400 block">Upcoming</span>
-          <span className="text-2xl font-black font-mono text-amber-400">{scheduledMatches.length}</span>
+        <div className={`p-3 rounded-xl border ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'}`}>
+          <span className={`text-[11px] font-bold block ${sunlightMode ? 'text-amber-600' : 'text-amber-400'}`}>Upcoming</span>
+          <span className={`text-2xl font-black font-mono ${sunlightMode ? 'text-amber-600' : 'text-amber-400'}`}>{scheduledMatches.length}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-          <span className="text-[11px] font-bold text-emerald-400 block">Published</span>
-          <span className="text-2xl font-black font-mono text-emerald-400">{publishedMatches.length}</span>
+        <div className={`p-3 rounded-xl border ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/60 border-slate-800'}`}>
+          <span className={`text-[11px] font-bold block ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>Published</span>
+          <span className={`text-2xl font-black font-mono ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>{publishedMatches.length}</span>
         </div>
 
         <div
@@ -506,16 +523,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           className={`p-3 rounded-xl cursor-pointer transition active:scale-95 border ${
             pendingVerificationMatches.length > 0
               ? 'bg-amber-500/20 border-amber-500/50 hover:bg-amber-500/30'
+              : sunlightMode
+              ? 'bg-slate-50 border-slate-200 hover:border-slate-300'
               : 'bg-slate-950/60 border-slate-800'
           }`}
         >
-          <span className="text-[11px] font-black text-amber-400 block uppercase flex items-center justify-between">
+          <span className="text-[11px] font-black text-amber-500 block uppercase flex items-center justify-between">
             To Verify
             {pendingVerificationMatches.length > 0 && (
               <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
             )}
           </span>
-          <span className="text-2xl font-black font-mono text-amber-300">
+          <span className="text-2xl font-black font-mono text-amber-500">
             {pendingVerificationMatches.length}
           </span>
         </div>
@@ -662,14 +681,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           {/* Schedule Table */}
           <div
             className={`rounded-2xl border overflow-hidden ${
-              sunlightMode ? 'bg-white border-slate-900' : 'bg-slate-900/80 border-slate-800'
+              sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/80 border-slate-800'
             }`}
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead
                   className={`border-b text-[11px] font-black uppercase tracking-wider ${
-                    sunlightMode ? 'bg-slate-100 text-slate-700' : 'bg-slate-950 text-slate-400 border-slate-800'
+                    sunlightMode ? 'bg-slate-50 text-slate-700 border-slate-200' : 'bg-slate-950 text-slate-400 border-slate-800'
                   }`}
                 >
                   <tr>
@@ -863,48 +882,50 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               <div
                 key={ref.id}
                 className={`p-5 rounded-2xl border flex flex-col justify-between gap-4 transition-all ${
-                  sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900 border-slate-800'
+                  sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900 border-slate-800'
                 }`}
               >
                 <div className="flex flex-col gap-2">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-black text-base text-white">{ref.name}</h3>
-                      <p className="text-xs text-slate-400 font-mono">{ref.email}</p>
+                      <h3 className={`font-black text-base ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>{ref.name}</h3>
+                      <p className={`text-xs font-mono ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>{ref.email}</p>
                     </div>
 
                     {/* Official ID Pass Badge */}
                     <div className="flex flex-col items-end">
-                      <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                      <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider">
                         Pass Code
                       </span>
-                      <span className="text-sm font-black font-mono px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 shadow-sm">
+                      <span className="text-sm font-black font-mono px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 shadow-sm">
                         {ref.code}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
                       {ref.sport_specialty || 'General Official'}
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-400">
+                    <span className={`text-[11px] font-semibold ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                       {ref.assigned_matches_count || 0} fixtures assigned
                     </span>
                   </div>
 
                   {/* List of assigned fixtures */}
                   {ref.assigned_matches && ref.assigned_matches.length > 0 && (
-                    <div className="mt-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] flex flex-col gap-1.5">
-                      <span className="font-bold text-slate-400 uppercase text-[9px] tracking-wider">
+                    <div className={`mt-2 p-2.5 rounded-xl border text-[11px] flex flex-col gap-1.5 ${
+                      sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950/80 border-slate-800'
+                    }`}>
+                      <span className={`font-bold uppercase text-[9px] tracking-wider ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                         Assigned Matches:
                       </span>
                       {ref.assigned_matches.slice(0, 3).map((am: any) => (
-                        <div key={am.id} className="flex items-center justify-between text-slate-300">
+                        <div key={am.id} className={`flex items-center justify-between ${sunlightMode ? 'text-slate-700' : 'text-slate-300'}`}>
                           <span className="font-semibold truncate max-w-[150px]">
                             {am.sport_id?.replace(/^sport-/, '')} &bull; {am.venue}
                           </span>
-                          <span className="font-mono text-[10px] text-amber-400 font-bold">
+                          <span className="font-mono text-[10px] text-amber-500 font-bold">
                             {am.status}
                           </span>
                         </div>
@@ -982,48 +1003,50 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   <div
                     key={m.id}
                     className={`p-5 rounded-2xl border flex flex-col justify-between gap-4 transition-all ${
-                      sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900 border-slate-800'
+                      sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900 border-slate-800'
                     }`}
                   >
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-black text-sm uppercase text-amber-400">
+                        <span className="font-black text-sm uppercase text-amber-500">
                           {m.sport_name || m.sport_id?.replace(/^sport-/, '')} &bull; {m.venue}
                         </span>
                         <span
                           className={`text-[10px] font-mono font-extrabold px-2 py-0.5 rounded ${
                             isVerified
-                              ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                              : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                              ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                              : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                           }`}
                         >
                           {m.status}
                         </span>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                      <div className={`p-3 rounded-xl border flex items-center justify-between ${
+                        sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'
+                      }`}>
                         <div>
-                          <div className="text-xs text-slate-400">{m.home_cohort_name || 'Seniors'}</div>
-                          <div className="text-2xl font-black font-mono text-white">
+                          <div className={`text-xs ${sunlightMode ? 'text-[#013B83] font-bold' : 'text-slate-400'}`}>{m.home_cohort_name || 'Seniors'}</div>
+                          <div className={`text-2xl font-black font-mono ${sunlightMode ? 'text-[#013B83]' : 'text-white'}`}>
                             {m.score_home ?? 0}
                           </div>
                         </div>
 
                         <div className="text-center">
-                          <span className="text-xs font-bold text-slate-500">FINAL SCORE</span>
-                          <div className="text-xs font-mono text-amber-400 font-bold">vs</div>
+                          <span className="text-xs font-bold text-slate-400">FINAL SCORE</span>
+                          <div className="text-xs font-mono text-amber-500 font-bold">vs</div>
                         </div>
 
                         <div className="text-right">
-                          <div className="text-xs text-slate-400">{m.away_cohort_name || 'Juniors'}</div>
-                          <div className="text-2xl font-black font-mono text-white">
+                          <div className={`text-xs ${sunlightMode ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>{m.away_cohort_name || 'Juniors'}</div>
+                          <div className={`text-2xl font-black font-mono ${sunlightMode ? 'text-emerald-700' : 'text-white'}`}>
                             {m.score_away ?? 0}
                           </div>
                         </div>
                       </div>
 
-                      <div className="text-[11px] text-slate-400 flex items-center justify-between">
-                        <span>Referee: <strong className="text-slate-200">{refInfo.name}</strong> ({refInfo.code})</span>
+                      <div className={`text-[11px] flex items-center justify-between ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <span>Referee: <strong className={sunlightMode ? 'text-slate-800' : 'text-slate-200'}>{refInfo.name}</strong> ({refInfo.code})</span>
                         <span className="font-mono">{formatTime(m.scheduled_at)}</span>
                       </div>
                     </div>
@@ -1098,10 +1121,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       Defending Champions
                     </span>
                     <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-xs font-bold">
-                      Batch 2026
+                      Seniors
                     </span>
                   </div>
-                  <h3 className="text-2xl font-black text-white">Seniors (BM &amp; HRM 26)</h3>
+                  <h3 className="text-2xl font-black text-white">Seniors</h3>
                   <p className="text-xs text-slate-400 mt-1">
                     {seniorStanding?.won ?? 0} Wins &bull; {seniorStanding?.lost ?? 0} Losses &bull; {seniorStanding?.drawn ?? 0} Draws
                   </p>
@@ -1123,10 +1146,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       Challengers
                     </span>
                     <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold">
-                      Batch 2027
+                      Juniors
                     </span>
                   </div>
-                  <h3 className="text-2xl font-black text-white">Juniors (BM &amp; HRM 27)</h3>
+                  <h3 className="text-2xl font-black text-white">Juniors</h3>
                   <p className="text-xs text-slate-400 mt-1">
                     {juniorStanding?.won ?? 0} Wins &bull; {juniorStanding?.lost ?? 0} Losses &bull; {juniorStanding?.drawn ?? 0} Draws
                   </p>
@@ -1149,30 +1172,32 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div
             className={`w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 relative shadow-2xl pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-800 text-white'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-slate-800 text-white'
             }`}
           >
             {/* Mobile Sheet Grab Bar */}
             <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mb-3 sm:hidden" />
             <button
               onClick={() => setIsNewMatchOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white"
+              className={`absolute top-4 right-4 p-1.5 rounded-full transition ${sunlightMode ? 'hover:bg-slate-100 text-slate-400 hover:text-slate-700' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
             >
               <X className="w-5 h-5" />
             </button>
 
             <h3 className="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-amber-400" />
+              <Calendar className="w-5 h-5 text-amber-500" />
               Schedule Tournament Fixture
             </h3>
 
             <form onSubmit={handleCreateMatch} className="flex flex-col gap-3 text-xs">
               <div>
-                <label className="font-bold block mb-1">Sport Event</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Sport Event</label>
                 <select
                   value={newSport}
                   onChange={(e) => setNewSport(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 >
                   {sports.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -1184,48 +1209,56 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold block mb-1">Home Team</label>
+                  <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Home Team</label>
                   <select
                     value={newHomeCohort}
                     onChange={(e) => setNewHomeCohort(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                    className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                      sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                    }`}
                   >
-                    <option value="cohort-seniors">Seniors (Batch 2026)</option>
-                    <option value="cohort-juniors">Juniors (Batch 2027)</option>
+                    <option value="cohort-seniors">Seniors</option>
+                    <option value="cohort-juniors">Juniors</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="font-bold block mb-1">Away Team</label>
+                  <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Away Team</label>
                   <select
                     value={newAwayCohort}
                     onChange={(e) => setNewAwayCohort(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                    className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                      sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                    }`}
                   >
-                    <option value="cohort-juniors">Juniors (Batch 2027)</option>
-                    <option value="cohort-seniors">Seniors (Batch 2026)</option>
+                    <option value="cohort-juniors">Juniors</option>
+                    <option value="cohort-seniors">Seniors</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Venue</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Venue</label>
                 <input
                   type="text"
                   value={newVenue}
                   onChange={(e) => setNewVenue(e.target.value)}
                   placeholder="e.g. Main Ground, Court 1, Indoor Arena"
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                   required
                 />
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Assign Certified Referee</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Assign Certified Referee</label>
                 <select
                   value={newReferee}
                   onChange={(e) => setNewReferee(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 >
                   <option value="">-- No Referee Assigned (Draft) --</option>
                   {referees.map((r) => (
@@ -1237,23 +1270,27 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Scheduled Time (Optional)</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Scheduled Time (Optional)</label>
                 <input
                   type="datetime-local"
                   value={newScheduledTime}
                   onChange={(e) => setNewScheduledTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Committee Notes (Optional)</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Committee Notes (Optional)</label>
                 <input
                   type="text"
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
                   placeholder="e.g. Quarterfinal fixture, 2x20 mins"
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 />
               </div>
 
@@ -1273,14 +1310,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div
             className={`w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 relative shadow-2xl pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-800 text-white'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-slate-800 text-white'
             }`}
           >
             {/* Mobile Sheet Grab Bar */}
             <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mb-3 sm:hidden" />
             <button
               onClick={() => setIsAddRefereeOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white"
+              className={`absolute top-4 right-4 p-1.5 rounded-full transition ${sunlightMode ? 'hover:bg-slate-100 text-slate-400 hover:text-slate-700' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -1289,47 +1326,53 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               <UserCheck className="w-5 h-5 text-purple-400" />
               Register Certified Referee
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className={`text-xs mb-4 ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
               Auto-generates a unique Referee ID Pass (e.g. REF-023) allowing direct referee fast login on the base screen.
             </p>
 
             <form onSubmit={handleCreateReferee} className="flex flex-col gap-3 text-xs">
               <div>
-                <label className="font-bold block mb-1">Official Full Name</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Official Full Name</label>
                 <input
                   type="text"
                   value={newRefName}
                   onChange={(e) => setNewRefName(e.target.value)}
                   placeholder="e.g. Vikram Malhotra"
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                   required
                 />
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Email Address (Optional)</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Email Address (Optional)</label>
                 <input
                   type="email"
                   value={newRefEmail}
                   onChange={(e) => setNewRefEmail(e.target.value)}
                   placeholder="e.g. vikram.ref@xlridelhi.ac.in (auto-generated if empty)"
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="font-bold block mb-1">Primary Sport Specialty</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Primary Sport Specialty</label>
                 <input
                   type="text"
                   value={newRefSpecialty}
                   onChange={(e) => setNewRefSpecialty(e.target.value)}
                   placeholder="e.g. Football & Futsal, Basketball, Cricket"
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                   required
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[11px] leading-relaxed">
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[11px] leading-relaxed">
                 💡 Upon registration, a certified pass code (e.g. <strong>REF-024</strong>) is created. You can immediately share the login pass via WhatsApp to the referee.
               </div>
 
@@ -1350,33 +1393,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div
             className={`w-full max-w-sm rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 relative shadow-2xl pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-800 text-white'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-slate-800 text-white'
             }`}
           >
             {/* Mobile Sheet Grab Bar */}
             <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mb-3 sm:hidden" />
             <button
               onClick={() => setSelectedMatchForReassign(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white"
+              className={`absolute top-4 right-4 p-1.5 rounded-full transition ${sunlightMode ? 'hover:bg-slate-100 text-slate-400 hover:text-slate-700' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
             >
               <X className="w-5 h-5" />
             </button>
 
             <h3 className="text-base font-black uppercase tracking-tight mb-2 flex items-center gap-2">
-              <Edit3 className="w-4 h-4 text-amber-400" />
+              <Edit3 className="w-4 h-4 text-amber-500" />
               Assign Official Referee
             </h3>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className={`text-xs mb-4 ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
               Match: {selectedMatchForReassign.sport_name || selectedMatchForReassign.sport_id?.replace(/^sport-/, '')} &bull; {selectedMatchForReassign.venue}
             </p>
 
             <form onSubmit={handleReassignReferee} className="flex flex-col gap-3 text-xs">
               <div>
-                <label className="font-bold block mb-1">Select Certified Referee</label>
+                <label className={`font-bold block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>Select Certified Referee</label>
                 <select
                   value={reassignRefId}
                   onChange={(e) => setReassignRefId(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border bg-slate-950 border-slate-800 text-white font-medium"
+                  className={`w-full p-2.5 rounded-xl border font-medium outline-none ${
+                    sunlightMode ? 'bg-slate-50 border-slate-300 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
+                  }`}
                 >
                   <option value="">-- Remove Referee (Unassigned) --</option>
                   {referees.map((r) => (
@@ -1423,7 +1468,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
           <div
             className={`w-full max-w-md rounded-2xl border p-6 relative shadow-2xl ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-red-500/40 text-slate-100'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-red-500/40 text-slate-100'
             }`}
           >
             <div className="flex items-center gap-2 mb-3 text-red-400 font-bold text-xs uppercase tracking-wider">

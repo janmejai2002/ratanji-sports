@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import db from '../db/client.js';
+import { requireRole } from '../services/rbac.js';
 
 export const sportsRouter = Router();
 
@@ -50,7 +51,7 @@ sportsRouter.get('/:id', (req: Request, res: Response) => {
  * POST /api/sports
  * Add a new sport event to the tournament catalog.
  */
-sportsRouter.post('/', (req: Request, res: Response) => {
+sportsRouter.post('/', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { name, category, scoring_type, rules } = req.body || {};
 
@@ -94,7 +95,7 @@ sportsRouter.post('/', (req: Request, res: Response) => {
  * PUT /api/sports/:id
  * Update an existing sport event.
  */
-sportsRouter.put('/:id', (req: Request, res: Response) => {
+sportsRouter.put('/:id', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const normalizedId = id.startsWith('sport-') ? id : `sport-${id}`;
@@ -128,7 +129,7 @@ sportsRouter.put('/:id', (req: Request, res: Response) => {
  * DELETE /api/sports/:id
  * Remove a sport event from the tournament catalog.
  */
-sportsRouter.delete('/:id', (req: Request, res: Response) => {
+sportsRouter.delete('/:id', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const normalizedId = id.startsWith('sport-') ? id : `sport-${id}`;

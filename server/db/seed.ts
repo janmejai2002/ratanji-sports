@@ -37,15 +37,15 @@ export function seedDatabase(dbInput: DatabaseSync | DatabaseClient | any, optio
     INSERT OR REPLACE INTO tournaments (id, name, year, start_date, end_date)
     VALUES (?, ?, ?, ?, ?)
   `);
-  insertTournament.run('tourn-xlri-2026', 'XLRI Delhi Annual Sports Festival 2026', 2026, '2026-10-10', '2026-10-18');
+  insertTournament.run('tourn-xlri-2026', 'XLRI Delhi - Ratanjee 2026', 2026, '2026-10-10', '2026-10-18');
 
   // 2. Cohorts
   const insertCohort = db.prepare(`
     INSERT OR REPLACE INTO cohorts (id, name, batch, color)
     VALUES (?, ?, ?, ?)
   `);
-  insertCohort.run('cohort-seniors', 'Seniors', 'Batch of 2026', '#1E40AF');
-  insertCohort.run('cohort-juniors', 'Juniors', 'Batch of 2027', '#DC2626');
+  insertCohort.run('cohort-seniors', 'Seniors', 'Batch of 2026', '#013B83');
+  insertCohort.run('cohort-juniors', 'Juniors', 'Batch of 2027', '#059669');
 
   // 3. 15 Sports
   const sportsData: [string, string, string, string, string][] = [

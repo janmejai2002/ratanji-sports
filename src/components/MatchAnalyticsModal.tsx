@@ -109,8 +109,8 @@ export const MatchAnalyticsModal: React.FC<MatchAnalyticsModalProps> = ({
   if (!isOpen || !currentMatch) return null;
 
   const sportName = currentMatch.sport_name || currentMatch.sport_id?.replace('sport-', '').replace('-', ' ').toUpperCase() || 'SPORTS';
-  const homeCohortName = currentMatch.home_cohort_name || "Seniors '26";
-  const awayCohortName = currentMatch.away_cohort_name || "Juniors '27";
+  const homeCohortName = currentMatch.home_cohort_name || 'Seniors';
+  const awayCohortName = currentMatch.away_cohort_name || 'Juniors';
   const scoreHome = Number(currentMatch.score_home) || 0;
   const scoreAway = Number(currentMatch.score_away) || 0;
   const statusRaw = String(currentMatch.status || '').toUpperCase();
@@ -215,7 +215,7 @@ export const MatchAnalyticsModal: React.FC<MatchAnalyticsModalProps> = ({
           time: `${ev.minute}'`,
           minute: ev.minute,
           momentum: Math.round(currentWave),
-          note: `${type} (${isHome ? "Seniors '26" : "Juniors '27"})`,
+          note: `${type} (${isHome ? 'Seniors' : 'Juniors'})`,
           dominant,
           score: `${runningHome} - ${runningAway}`
         });
@@ -550,7 +550,7 @@ export const MatchAnalyticsModal: React.FC<MatchAnalyticsModalProps> = ({
       <div
         className={`w-full max-w-3xl rounded-t-3xl sm:rounded-2xl border-t sm:border shadow-2xl relative transition-all pb-safe max-h-[92vh] sm:max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
           sunlightMode
-            ? 'bg-white border-slate-900 text-slate-950'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
             : 'bg-slate-900/95 border-white/10 text-slate-100 shadow-blue-950/20'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -559,9 +559,13 @@ export const MatchAnalyticsModal: React.FC<MatchAnalyticsModalProps> = ({
         <div className="w-12 h-1.5 rounded-full bg-slate-700/80 mx-auto my-2.5 sm:hidden shrink-0" />
 
         {/* Modal Header */}
-        <div className="px-5 pt-3 sm:pt-5 pb-3 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div className={`px-5 pt-3 sm:pt-5 pb-3 border-b flex items-center justify-between shrink-0 ${
+          sunlightMode ? 'border-slate-200 bg-slate-50' : 'border-white/10'
+        }`}>
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/40 text-blue-400 flex items-center justify-center shrink-0">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+              sunlightMode ? 'bg-[#013B83]/10 text-[#013B83]' : 'bg-blue-600/20 border border-blue-500/40 text-blue-400'
+            }`}>
               <BarChart3 className="w-5 h-5" />
             </div>
             <div>

@@ -120,7 +120,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       <div
         className={`w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl border-t sm:border shadow-2xl transition-all pb-safe animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
           sunlightMode
-            ? 'bg-white border-slate-900 text-slate-950'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
             : 'bg-slate-900 border-amber-500/30 text-slate-100'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -130,7 +130,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         {/* Header */}
         <div
           className={`sticky top-0 z-10 px-6 py-4 border-b flex items-center justify-between ${
-            sunlightMode ? 'bg-slate-100 border-slate-300' : 'bg-slate-950 border-slate-800'
+            sunlightMode ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-950 border-slate-800 text-white'
           }`}
         >
           <div className="flex items-center gap-3">
@@ -141,7 +141,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight flex items-center gap-2">
                 Official Tournament Sign In
               </h2>
-              <p className="text-xs opacity-75">
+              <p className={`text-xs ${sunlightMode ? 'text-slate-500' : 'opacity-75'}`}>
                 Referee Access &bull; Sports Committee Executive Console
               </p>
             </div>
@@ -152,7 +152,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               sounds.playClick();
               onClose();
             }}
-            className="p-1.5 rounded-lg hover:bg-black/10 text-slate-400 hover:text-white transition font-bold"
+            className={`p-1.5 rounded-lg transition font-bold ${sunlightMode ? 'hover:bg-slate-200 text-slate-500' : 'hover:bg-black/10 text-slate-400 hover:text-white'}`}
           >
             ✕
           </button>
@@ -160,7 +160,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
         {/* Tab Switcher: Referee vs Committee */}
         <div className="px-6 pt-4">
-          <div className="flex rounded-xl bg-black/40 border border-white/10 p-1 gap-1">
+          <div className={`flex rounded-xl p-1 gap-1 border ${sunlightMode ? 'bg-slate-100 border-slate-200' : 'bg-black/40 border-white/10'}`}>
             <button
               onClick={() => {
                 sounds.playClick();
@@ -170,6 +170,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               className={`flex-1 py-2 px-3 rounded-lg text-xs font-black transition flex items-center justify-center gap-1.5 ${
                 tab === 'referee'
                   ? 'bg-emerald-600 text-white shadow-md'
+                  : sunlightMode
+                  ? 'text-slate-600 hover:text-slate-900'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -186,6 +188,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               className={`flex-1 py-2 px-3 rounded-lg text-xs font-black transition flex items-center justify-center gap-1.5 ${
                 tab === 'committee'
                   ? 'bg-amber-500 text-black shadow-md'
+                  : sunlightMode
+                  ? 'text-slate-600 hover:text-slate-900'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -219,8 +223,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               </div>
 
               {/* Referee Code Input Box */}
-              <div className="p-4 rounded-xl bg-black/40 border border-slate-800 space-y-3">
-                <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
+              <div className={`p-4 rounded-xl border space-y-3 ${sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-black/40 border-slate-800'}`}>
+                <label className={`text-[11px] font-bold uppercase tracking-wider block ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>
                   Enter Your Official Referee ID / Code:
                 </label>
                 <div className="flex gap-2">
@@ -229,7 +233,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     value={refereeCode}
                     onChange={(e) => setRefereeCode(e.target.value.toUpperCase())}
                     placeholder="e.g. REF-023"
-                    className="flex-1 px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-mono font-bold text-sm tracking-wider uppercase focus:outline-none focus:border-emerald-500"
+                    className={`flex-1 px-3.5 py-2.5 rounded-xl border font-mono font-bold text-sm tracking-wider uppercase focus:outline-none focus:border-emerald-500 ${
+                      sunlightMode
+                        ? 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400'
+                        : 'bg-black border-slate-700 text-white'
+                    }`}
                   />
                   <button
                     onClick={() => handleRefereeLogin()}
@@ -243,7 +251,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               </div>
 
               {/* Official notice */}
-              <div className="p-3.5 rounded-xl bg-black/30 border border-slate-800 text-[11px] text-slate-400">
+              <div className={`p-3.5 rounded-xl border text-[11px] ${sunlightMode ? 'bg-slate-50 border-slate-200 text-slate-500' : 'bg-black/30 border-slate-800 text-slate-400'}`}>
                 Official field credentials are issued by the XLRI Sports Committee. For access disputes or ID reissuance, visit the Committee Desk at the Main Sports Complex.
               </div>
             </div>
@@ -259,7 +267,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     : 'bg-amber-500/10 border-amber-500/30 text-amber-200'
                 }`}
               >
-                <Shield className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <Shield className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">
                   <span className="font-bold">Sports Committee Console:</span> Authorized executives sign in with their university committee credentials to manage fixtures, assign referees, and certify official scores.
                 </div>
@@ -268,7 +276,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               {/* Manual Committee Credentials Form */}
               <form onSubmit={handleCommitteeLogin} className="space-y-3.5">
                 <div>
-                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                  <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>
                     Committee Email or Username
                   </label>
                   <input
@@ -276,12 +284,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@xlri.edu"
-                    className="w-full px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-medium text-xs focus:outline-none focus:border-amber-500"
+                    className={`w-full px-3.5 py-2.5 rounded-xl border font-medium text-xs focus:outline-none focus:border-amber-500 ${
+                      sunlightMode
+                        ? 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400'
+                        : 'bg-black border-slate-700 text-white'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                  <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-300'}`}>
                     Committee Security Password
                   </label>
                   <div className="relative">
@@ -290,12 +302,16 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-medium text-xs focus:outline-none focus:border-amber-500 pr-10"
+                      className={`w-full px-3.5 py-2.5 rounded-xl border font-medium text-xs focus:outline-none focus:border-amber-500 pr-10 ${
+                        sunlightMode
+                          ? 'bg-white border-slate-300 text-slate-900 placeholder:text-slate-400'
+                          : 'bg-black border-slate-700 text-white'
+                      }`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                      className={`absolute right-3 top-2.5 ${sunlightMode ? 'text-slate-400 hover:text-slate-700' : 'text-slate-400 hover:text-white'}`}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -318,12 +334,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div
             className={`p-3 rounded-xl border text-[11px] flex items-center justify-between gap-2 ${
               sunlightMode
-                ? 'bg-slate-100 border-slate-300 text-slate-700'
+                ? 'bg-slate-50 border-slate-200 text-slate-600'
                 : 'bg-black/30 border-slate-800 text-slate-400'
             }`}
           >
             <span>Public Spectators browse match scores automatically without login.</span>
-            <span className="font-mono text-amber-400 font-bold">Anonymous Guest</span>
+            <span className="font-mono text-amber-500 font-bold">Anonymous Guest</span>
           </div>
         </div>
       </div>

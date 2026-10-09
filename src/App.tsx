@@ -62,12 +62,23 @@ export default function App() {
     sounds.playWhistle();
   };
 
-  // Safe tab selection with authentication guard
+  // Safe tab selection with authentication and role guard
   const handleSelectTab = (tab: 'matchCenter' | 'contingent' | 'referee' | 'admin') => {
-    if ((tab === 'referee' || tab === 'admin') && !isAuthenticated) {
-      sounds.playClick();
-      setIsLoginModalOpen(true);
-      return;
+    if (tab === 'referee') {
+      if (!isAuthenticated || (currentUser.role !== 'referee' && currentUser.role !== 'admin')) {
+        sounds.playClick();
+        setLoginInitialTab('referee');
+        setIsLoginModalOpen(true);
+        return;
+      }
+    }
+    if (tab === 'admin') {
+      if (!isAuthenticated || currentUser.role !== 'admin') {
+        sounds.playClick();
+        setLoginInitialTab('committee');
+        setIsLoginModalOpen(true);
+        return;
+      }
     }
     setActiveTab(tab);
   };
@@ -99,8 +110,8 @@ export default function App() {
     <div
       className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
         sunlightMode
-          ? 'bg-slate-100 text-slate-950'
-          : 'bg-slate-950 text-slate-100 stadium-glow'
+          ? 'bg-slate-50 text-slate-900'
+          : 'bg-slate-950 text-slate-100'
       }`}
     >
       {/* Top Navigation Bar with Base Screen Header & Login Action */}
@@ -139,7 +150,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'referee' && isAuthenticated && (
+        {activeTab === 'referee' && isAuthenticated && (currentUser.role === 'referee' || currentUser.role === 'admin') && (
           <RefereePad
             sunlightMode={sunlightMode}
             onRefresh={loadData}
@@ -147,7 +158,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'admin' && isAuthenticated && (
+        {activeTab === 'admin' && isAuthenticated && currentUser.role === 'admin' && (
           <AdminPortal
             sunlightMode={sunlightMode}
             matches={matches}
@@ -191,16 +202,19 @@ export default function App() {
       <footer
         className={`border-t px-6 py-4 pb-20 md:pb-4 text-center text-xs transition-colors ${
           sunlightMode
-            ? 'bg-white border-slate-300 text-slate-600'
+            ? 'bg-white border-slate-200 text-slate-600'
             : 'border-slate-800/80 bg-slate-950 text-slate-500'
         }`}
       >
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>
-            RATANJEE 2026 &bull; Digital Sports Management System &bull; XLRI Delhi Sports Committee
-          </span>
-          <span className="font-mono text-[11px] text-amber-500 font-bold">
-            High-Contrast Sunlight &amp; Dark Stadium Mode Active
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <img src="/xlri-shield-logo.png" alt="XLRI Logo" className="h-5 w-auto object-contain opacity-80" />
+            <span className="font-semibold text-slate-400">
+              RATANJEE &bull; XLRI Delhi Sports Committee
+            </span>
+          </div>
+          <span className="text-xs text-slate-500">
+            Official Inter-Batch Sports Management &amp; Scoring System
           </span>
         </div>
       </footer>

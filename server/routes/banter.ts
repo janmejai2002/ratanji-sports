@@ -82,8 +82,8 @@ banterRouter.post('/', (req: Request, res: Response) => {
       author && typeof author === 'string' && author.trim()
         ? author.trim()
         : cleanBatch === 'Senior'
-        ? 'Senior Fan (BM 26)'
-        : 'Junior Fan (HRM 27)';
+        ? 'Senior Supporter'
+        : 'Junior Supporter';
     const cleanText = text.trim().slice(0, 500); // 500 char max
     const id = 'b-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
     const createdAt = new Date().toISOString();

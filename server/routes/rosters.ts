@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import db from '../db/client.js';
+import { requireRole } from '../services/rbac.js';
 
 export const rostersRouter = Router();
 
@@ -168,7 +169,7 @@ rostersRouter.get('/:id', (req: Request, res: Response) => {
  * POST /api/contingent/players
  * Add a new student athlete to a squad / contingent.
  */
-rostersRouter.post('/players', (req: Request, res: Response) => {
+rostersRouter.post('/players', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const {
       name,
@@ -232,7 +233,7 @@ rostersRouter.post('/players', (req: Request, res: Response) => {
  * PUT /api/contingent/players/:id
  * Edit athlete details (name, jersey number, position, sport, injury status).
  */
-rostersRouter.put('/players/:id', (req: Request, res: Response) => {
+rostersRouter.put('/players/:id', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const existing = db.queryOne<any>('SELECT * FROM players WHERE id = ?', [id]);
@@ -299,7 +300,7 @@ rostersRouter.put('/players/:id', (req: Request, res: Response) => {
  * DELETE /api/contingent/players/:id
  * Remove athlete from contingent roster.
  */
-rostersRouter.delete('/players/:id', (req: Request, res: Response) => {
+rostersRouter.delete('/players/:id', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const existing = db.queryOne<any>('SELECT * FROM players WHERE id = ?', [id]);
@@ -318,7 +319,7 @@ rostersRouter.delete('/players/:id', (req: Request, res: Response) => {
  * PUT /api/contingent/cohorts/:id
  * Set / edit team cohort metadata (name, batch, color).
  */
-rostersRouter.put('/cohorts/:id', (req: Request, res: Response) => {
+rostersRouter.put('/cohorts/:id', requireRole('admin'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const resolvedId = id.startsWith('cohort-') ? id : `cohort-${id}`;

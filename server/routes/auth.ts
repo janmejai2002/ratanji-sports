@@ -143,7 +143,7 @@ export const PREDEFINED_ACCOUNTS: PredefinedAccount[] = [
     password: 'xlri-play-2026',
     role: 'spectator',
     badge: 'Contingent Captain',
-    description: 'Seniors Batch 2026 contingent athlete: roster management, contingent stats, injury tracker, and player profile.',
+    description: 'Seniors contingent athlete: roster management, contingent stats, injury tracker, and player profile.',
   },
 ];
 

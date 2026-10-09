@@ -53,7 +53,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
       <div
         className={`w-full max-w-lg rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 relative shadow-2xl transition-all pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
           sunlightMode
-            ? 'bg-white border-slate-900 text-slate-950'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
             : 'bg-slate-900 border-amber-500/40 text-slate-100 shadow-amber-500/10'
         }`}
       >
@@ -75,7 +75,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
         <div
           className={`p-6 rounded-xl border-2 mb-5 relative overflow-hidden ${
             sunlightMode
-              ? 'bg-gradient-to-br from-amber-100 via-white to-slate-100 border-slate-900'
+              ? 'bg-gradient-to-br from-amber-50 via-white to-slate-50 border-slate-300'
               : 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/40 border-amber-500/60'
           }`}
         >

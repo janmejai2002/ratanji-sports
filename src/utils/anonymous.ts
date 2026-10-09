@@ -26,7 +26,7 @@ export function getOrCreateAnonymousUser(): AnonymousUser {
 
   // Generate a friendly, persistent campus spectator session
   const randomNum = Math.floor(100 + Math.random() * 900);
-  const affiliations = ['Senior Batch 26 Backer', 'Junior Batch 27 Supporter', 'XLRI Neutral Fan'];
+  const affiliations = ['Senior Supporter', 'Junior Supporter', 'XLRI Fan'];
   const affiliation = affiliations[Math.floor(Math.random() * affiliations.length)];
 
   const newUser: AnonymousUser = {

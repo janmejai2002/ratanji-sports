@@ -91,7 +91,7 @@ class SoundEngine {
   }
 
   /**
-   * Stadium Goal Horn (Deep brass harmonic blast)
+   * Official Game Buzzer / Horn (Deep brass harmonic blast)
    */
   public playGoalHorn() {
     if (!this.enabled) return;

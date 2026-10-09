@@ -33,17 +33,17 @@ export const ShareMatchModal: React.FC<ShareMatchModalProps> = ({
 
   // WhatsApp formatted message with emojis and clear status
   const whatsappMessage = 
-`🏆 *XLRI DELHI RATANJEE 2026 • LIVE MATCH UPDATE*
+`🏆 *XLRI DELHI • RATANJEE 2026*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚡ *${sportName.toUpperCase()}*
-⚔️ *${match.home_cohort_name || "Seniors '26"}* [ ${homeScore} - ${awayScore} ] *${match.away_cohort_name || "Juniors '27"}*
+⚔️ *${match.home_cohort_name || "Seniors"}* [ ${homeScore} - ${awayScore} ] *${match.away_cohort_name || "Juniors"}*
 ⏱️ *Status:* ${match.status === 'Draft' || match.status === 'Live' ? '🔴 LIVE' : match.status} (${period}${timeMin ? ` • ${timeMin}` : ''})
 📍 *Venue:* ${venue}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📲 *Track live ball-by-ball / point-by-point updates:*
+📲 *Track live score updates:*
 ${trackingLink}
 
-#Ratanjee2026 #XLRI #SeniorsVsJuniors #SportsCommittee`;
+#Ratanjee #XLRI #SeniorsVsJuniors #SportsCommittee`;
 
   const handleShareWhatsApp = () => {
     sounds.playGoalHorn();
@@ -74,7 +74,7 @@ ${trackingLink}
       <div
         className={`w-full max-w-lg rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 shadow-2xl relative transition-all pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
           sunlightMode
-            ? 'bg-white border-slate-900 text-slate-950'
+            ? 'bg-white border-slate-200 text-slate-900 shadow-xl'
             : 'bg-slate-900 border-amber-500/40 text-slate-100 shadow-amber-500/10'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -89,7 +89,7 @@ ${trackingLink}
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-2 mb-1 text-xs font-bold text-amber-400 uppercase tracking-wide">
+        <div className="flex items-center gap-2 mb-1 text-xs font-bold text-amber-500 uppercase tracking-wide">
           <Share2 className="w-4 h-4" />
           Live Score Tracking &amp; WhatsApp Broadcast
         </div>
@@ -99,9 +99,11 @@ ${trackingLink}
         </h3>
 
         {/* Live Match Card Preview */}
-        <div className="p-4 rounded-xl bg-black/60 border border-slate-800 mb-4">
+        <div className={`p-4 rounded-xl border mb-4 ${
+          sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-black/60 border-slate-800'
+        }`}>
           <div className="flex items-center justify-between text-xs font-mono mb-2">
-            <span className="font-bold text-amber-400 uppercase">{sportName}</span>
+            <span className="font-bold text-amber-500 uppercase">{sportName}</span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-red-600 text-white flex items-center gap-1">
               <Activity className="w-3 h-3" />
               {match.status}
@@ -110,13 +112,17 @@ ${trackingLink}
 
           <div className="flex items-center justify-between py-2 text-center">
             <div className="flex-1">
-              <span className="text-[11px] font-bold text-blue-400 block uppercase">Seniors (Batch '26)</span>
-              <span className="text-3xl font-black font-mono text-white">{homeScore}</span>
+              <span className={`text-[11px] font-bold block uppercase ${sunlightMode ? 'text-[#013B83]' : 'text-blue-400'}`}>
+                {match.home_cohort_name || 'Seniors'}
+              </span>
+              <span className={`text-3xl font-black font-mono ${sunlightMode ? 'text-[#013B83]' : 'text-white'}`}>{homeScore}</span>
             </div>
-            <div className="text-xs font-mono font-bold text-slate-600 px-3">VS</div>
+            <div className={`text-xs font-mono font-bold px-3 ${sunlightMode ? 'text-slate-400' : 'text-slate-600'}`}>VS</div>
             <div className="flex-1">
-              <span className="text-[11px] font-bold text-emerald-400 block uppercase">Juniors (Batch '27)</span>
-              <span className="text-3xl font-black font-mono text-white">{awayScore}</span>
+              <span className={`text-[11px] font-bold block uppercase ${sunlightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
+                {match.away_cohort_name || 'Juniors'}
+              </span>
+              <span className={`text-3xl font-black font-mono ${sunlightMode ? 'text-emerald-700' : 'text-white'}`}>{awayScore}</span>
             </div>
           </div>
 

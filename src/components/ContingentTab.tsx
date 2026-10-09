@@ -71,7 +71,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
   // Form states for Team/Cohort Edit
   const [teamName, setTeamName] = useState('Seniors');
-  const [teamBatch, setTeamBatch] = useState('Batch of 2026');
+  const [teamBatch, setTeamBatch] = useState('Seniors');
   const [teamColor, setTeamColor] = useState('#1E40AF');
 
   // Load players from database
@@ -119,6 +119,10 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
   }, [selectedCohort, selectedSport]);
 
   const openAddPlayer = () => {
+    if (!isSportsCom) {
+      alert('Access Restricted: Only Sports Committee administrators can add athletes.');
+      return;
+    }
     sounds.playClick();
     setFormName('');
     setFormStudentId('');
@@ -132,6 +136,10 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
   const openEditPlayer = (p: any, e?: React.MouseEvent) => {
     e?.stopPropagation();
+    if (!isSportsCom) {
+      alert('Access Restricted: Only Sports Committee administrators can edit athlete rosters.');
+      return;
+    }
     sounds.playClick();
     setEditingPlayer(p);
     setFormName(p.name || '');
@@ -145,6 +153,10 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
   const handleSavePlayer = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSportsCom) {
+      alert('Access Restricted: Only Sports Committee administrators can modify athlete rosters.');
+      return;
+    }
     try {
       if (editingPlayer) {
         // PUT update
@@ -156,7 +168,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
           status: formStatus.toUpperCase(),
           primary_sport_id: formSport.startsWith('sport-') ? formSport : `sport-${formSport}`,
           cohort_id: formCohort === 'juniors' ? 'cohort-juniors' : 'cohort-seniors',
-        }, 'admin');
+        }, currentUser?.role, currentUser?.id);
         sounds.playWhistle();
         setEditingPlayer(null);
       } else {
@@ -169,7 +181,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
           status: formStatus.toUpperCase(),
           primary_sport_id: formSport.startsWith('sport-') ? formSport : `sport-${formSport}`,
           cohort_id: formCohort === 'juniors' ? 'cohort-juniors' : 'cohort-seniors',
-        }, 'admin');
+        }, currentUser?.role, currentUser?.id);
         sounds.playWhistle();
         setIsAddPlayerOpen(false);
       }
@@ -181,10 +193,14 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
   const handleDeletePlayer = async (playerId: string, playerName: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
+    if (!isSportsCom) {
+      alert('Access Restricted: Only Sports Committee administrators can remove athletes.');
+      return;
+    }
     if (!confirm(`Are you sure you want to remove ${playerName} from the squad?`)) return;
 
     try {
-      await api.delete(`/api/contingent/players/${playerId}`, 'admin');
+      await api.delete(`/api/contingent/players/${playerId}`, currentUser?.role, currentUser?.id);
       sounds.playClick();
       loadRoster();
     } catch (err: any) {
@@ -194,13 +210,17 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
   const handleSaveTeam = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSportsCom) {
+      alert('Access Restricted: Only Sports Committee administrators can modify team details.');
+      return;
+    }
     try {
       const cohortId = selectedCohort === 'seniors' ? 'cohort-seniors' : 'cohort-juniors';
       await api.put(`/api/contingent/cohorts/${cohortId}`, {
         name: teamName,
         batch: teamBatch,
         color: teamColor,
-      }, 'admin');
+      }, currentUser?.role, currentUser?.id);
       sounds.playWhistle();
       setIsEditTeamOpen(false);
       loadRoster();
@@ -229,7 +249,9 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
   return (
     <div className="flex flex-col gap-5 animate-in fade-in">
       {/* Top Controls: Team Selector + Management Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl border bg-slate-900/60 border-slate-800">
+      <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 rounded-2xl border ${
+        sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/60 border-slate-800'
+      }`}>
         {/* Cohort Tabs */}
         <div className="flex items-center gap-2">
           <button
@@ -237,15 +259,19 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
               sounds.playClick();
               setSelectedCohort('seniors');
               setTeamName('Seniors');
-              setTeamBatch('Batch of 2026');
+              setTeamBatch('');
             }}
             className={`px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase transition active:scale-95 ${
               selectedCohort === 'seniors'
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400'
+                ? sunlightMode
+                  ? 'bg-[#013B83] text-white shadow-md ring-2 ring-[#013B83]/40'
+                  : 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400'
+                : sunlightMode
+                ? 'bg-slate-100 text-slate-600 hover:text-[#013B83]'
                 : 'bg-black/40 text-slate-400 hover:text-white'
             }`}
           >
-            Seniors (Batch of 2026)
+            Seniors
           </button>
 
           <button
@@ -253,15 +279,19 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
               sounds.playClick();
               setSelectedCohort('juniors');
               setTeamName('Juniors');
-              setTeamBatch('Batch of 2027');
+              setTeamBatch('');
             }}
             className={`px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase transition active:scale-95 ${
               selectedCohort === 'juniors'
-                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-2 ring-emerald-400'
+                ? sunlightMode
+                  ? 'bg-emerald-700 text-white shadow-md ring-2 ring-emerald-500/40'
+                  : 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-2 ring-emerald-400'
+                : sunlightMode
+                ? 'bg-slate-100 text-slate-600 hover:text-emerald-700'
                 : 'bg-black/40 text-slate-400 hover:text-white'
             }`}
           >
-            Juniors (Batch of 2027)
+            Juniors
           </button>
         </div>
 
@@ -309,13 +339,15 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
         {/* Left Column: Dynamic Sports Categories */}
         <div
           className={`p-3 rounded-2xl border flex flex-col gap-1 max-h-[640px] overflow-y-auto ${
-            sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900/90 border-slate-800'
+            sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-slate-800'
           }`}
         >
-          <div className="px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-800 mb-1 flex items-center justify-between">
+          <div className={`px-3 py-2 text-[11px] font-extrabold uppercase tracking-wider border-b mb-1 flex items-center justify-between ${
+            sunlightMode ? 'border-slate-200 text-slate-600' : 'border-slate-800 text-slate-400'
+          }`}>
             <span className="flex items-center gap-1">
               <span>Sports Events</span>
-              <span className="font-mono text-amber-400">({sports.length})</span>
+              <span className="font-mono text-amber-500">({sports.length})</span>
             </span>
 
             {isSportsCom && (
@@ -362,7 +394,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
           {/* Roster Header & Search */}
           <div
             className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
-              sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900/90 border-slate-800'
+              sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-slate-800'
             }`}
           >
             <div>
@@ -370,13 +402,13 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                 <h3 className="font-black text-sm tracking-wide uppercase">
                   {currentSportName} Contingent
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-amber-500/10 text-amber-500 border border-amber-500/30">
                   {filteredPlayers.length} ATHLETES
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Active: <span className="text-emerald-400 font-bold">{activeCount}</span> &bull; Injured:{' '}
-                <span className="text-red-400 font-bold">{injuredCount}</span>
+              <p className={`text-xs mt-0.5 ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                Active: <span className="text-emerald-500 font-bold">{activeCount}</span> &bull; Injured:{' '}
+                <span className="text-red-500 font-bold">{injuredCount}</span>
               </p>
             </div>
 
@@ -388,7 +420,11 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                 placeholder="Search athlete..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-black/40 border border-slate-700 text-white placeholder-slate-500 focus:border-amber-400 outline-none"
+                className={`w-full pl-9 pr-3 py-1.5 text-xs rounded-xl outline-none transition ${
+                  sunlightMode
+                    ? 'bg-slate-50 border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-[#013B83]'
+                    : 'bg-black/40 border border-slate-700 text-white placeholder-slate-500 focus:border-amber-400'
+                }`}
               />
             </div>
           </div>
@@ -401,12 +437,16 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
               <div className="p-8 rounded-2xl border border-dashed border-slate-800 text-center">
                 <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                 <p className="text-xs text-slate-400">No athletes found for this sport.</p>
-                <button
-                  onClick={openAddPlayer}
-                  className="mt-3 px-3 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold"
-                >
-                  + Add First Athlete
-                </button>
+                {isSportsCom ? (
+                  <button
+                    onClick={openAddPlayer}
+                    className="mt-3 px-3 py-1.5 rounded-lg bg-amber-500 text-black text-xs font-bold"
+                  >
+                    + Add First Athlete
+                  </button>
+                ) : (
+                  <p className="mt-2 text-[11px] text-slate-500 italic">Roster locked (Spectator Mode)</p>
+                )}
               </div>
             ) : (
               filteredPlayers.map((p) => {
@@ -429,12 +469,16 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-black/50 border border-white/10 flex items-center justify-center font-mono font-black text-xs text-amber-400">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-black text-xs ${
+                        sunlightMode ? 'bg-[#013B83]/10 border border-[#013B83]/20 text-[#013B83]' : 'bg-black/50 border border-white/10 text-amber-400'
+                      }`}>
                         {p.jersey_number ? `#${p.jersey_number}` : '•'}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-white group-hover:text-amber-300 transition">
+                          <span className={`font-bold text-xs transition ${
+                            sunlightMode ? 'text-slate-900 group-hover:text-[#013B83]' : 'text-white group-hover:text-amber-300'
+                          }`}>
                             {p.name}
                           </span>
                           <span
@@ -484,18 +528,18 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
           {selectedPlayer ? (
             <div
               className={`p-5 rounded-2xl border flex flex-col justify-between ${
-                sunlightMode ? 'bg-white border-slate-900 shadow-sm' : 'bg-slate-900/90 border-slate-800'
+                sunlightMode ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-slate-800'
               }`}
             >
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className={`flex items-center justify-between border-b pb-3 ${sunlightMode ? 'border-slate-200' : 'border-slate-800'}`}>
                   <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">
                     Athlete Profile Card
                   </span>
                   {isSportsCom && (
                     <button
                       onClick={() => openEditPlayer(selectedPlayer)}
-                      className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
+                      className="text-xs font-bold text-amber-500 hover:text-amber-400 flex items-center gap-1"
                     >
                       <Edit2 className="w-3 h-3" />
                       Edit
@@ -504,31 +548,37 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                 </div>
 
                 <div className="text-center py-2">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 font-mono font-black text-2xl flex items-center justify-center mx-auto mb-2 shadow">
+                  <div className={`w-16 h-16 rounded-2xl font-mono font-black text-2xl flex items-center justify-center mx-auto mb-2 shadow ${
+                    sunlightMode
+                      ? 'bg-[#013B83]/10 border border-[#013B83]/20 text-[#013B83]'
+                      : 'bg-amber-500/20 border border-amber-500/40 text-amber-400'
+                  }`}>
                     {selectedPlayer.jersey_number ? `#${selectedPlayer.jersey_number}` : '•'}
                   </div>
-                  <h4 className="font-black text-base text-white">{selectedPlayer.name}</h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <h4 className={`font-black text-base ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>{selectedPlayer.name}</h4>
+                  <p className={`text-xs mt-0.5 ${sunlightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                     {selectedPlayer.position || 'Athlete'} &bull; {selectedPlayer.cohort_name || selectedPlayer.cohort}
                   </p>
                 </div>
 
-                <div className="space-y-2 p-3 rounded-xl bg-black/40 border border-white/5 font-mono text-xs">
+                <div className={`space-y-2 p-3 rounded-xl border font-mono text-xs ${
+                  sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-black/40 border-white/5'
+                }`}>
                   <div className="flex justify-between">
-                    <span className="text-slate-500 uppercase text-[10px]">Student ID:</span>
-                    <span className="font-bold text-slate-200">{selectedPlayer.student_id}</span>
+                    <span className="text-slate-400 uppercase text-[10px]">Student ID:</span>
+                    <span className={`font-bold ${sunlightMode ? 'text-slate-800' : 'text-slate-200'}`}>{selectedPlayer.student_id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500 uppercase text-[10px]">Primary Sport:</span>
-                    <span className="font-bold text-amber-300 capitalize">{currentSportName}</span>
+                    <span className="text-slate-400 uppercase text-[10px]">Primary Sport:</span>
+                    <span className="font-bold text-amber-500 capitalize">{currentSportName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500 uppercase text-[10px]">Status:</span>
+                    <span className="text-slate-400 uppercase text-[10px]">Status:</span>
                     <span
                       className={`font-bold ${
                         selectedPlayer.status?.toUpperCase() === 'INJURED'
-                          ? 'text-red-400'
-                          : 'text-emerald-400'
+                          ? 'text-red-500'
+                          : 'text-emerald-600'
                       }`}
                     >
                       {selectedPlayer.status}
@@ -544,11 +594,13 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     </span>
                     <div className="grid grid-cols-2 gap-2">
                       {Object.entries(selectedPlayer.stats).map(([k, v]) => (
-                        <div key={k} className="p-2 rounded-lg bg-black/30 border border-white/5 text-center">
-                          <span className="text-[9px] font-mono text-slate-500 uppercase block truncate">
+                        <div key={k} className={`p-2 rounded-lg border text-center ${
+                          sunlightMode ? 'bg-slate-50 border-slate-200' : 'bg-black/30 border-white/5'
+                        }`}>
+                          <span className="text-[9px] font-mono text-slate-400 uppercase block truncate">
                             {k}
                           </span>
-                          <span className="font-mono font-bold text-xs text-white">{String(v)}</span>
+                          <span className={`font-mono font-bold text-xs ${sunlightMode ? 'text-slate-900' : 'text-white'}`}>{String(v)}</span>
                         </div>
                       ))}
                     </div>
@@ -556,7 +608,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800 flex gap-2">
+              <div className={`mt-4 pt-3 border-t flex gap-2 ${sunlightMode ? 'border-slate-200' : 'border-slate-800'}`}>
                 <button
                   onClick={() => openEditPlayer(selectedPlayer)}
                   className="flex-1 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 flex items-center justify-center gap-1"
@@ -582,7 +634,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
       </div>
 
       {/* MODAL 1: Add or Edit Player */}
-      {(isAddPlayerOpen || editingPlayer) && (
+      {isSportsCom && (isAddPlayerOpen || editingPlayer) && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in"
           onClick={() => {
@@ -592,7 +644,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
         >
           <div
             className={`w-full max-w-md rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 shadow-2xl relative pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-700 text-white'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-slate-700 text-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -615,7 +667,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
             <form onSubmit={handleSavePlayer} className="space-y-3.5 text-xs">
               <div>
-                <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                   Full Athlete Name
                 </label>
                 <input
@@ -624,13 +676,17 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                   placeholder="e.g. Arjun Nair"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                    sunlightMode
+                      ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                      : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                  }`}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Student ID
                   </label>
                   <input
@@ -638,12 +694,16 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     placeholder="e.g. 26BM002"
                     value={formStudentId}
                     onChange={(e) => setFormStudentId(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Jersey #
                   </label>
                   <input
@@ -651,14 +711,18 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     placeholder="e.g. 10"
                     value={formJersey}
                     onChange={(e) => setFormJersey(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none font-mono"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-mono font-bold ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Squad Position
                   </label>
                   <input
@@ -666,18 +730,26 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     placeholder="e.g. Forward / Captain"
                     value={formPosition}
                     onChange={(e) => setFormPosition(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Health Status
                   </label>
                   <select
                     value={formStatus}
                     onChange={(e) => setFormStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   >
                     <option value="Active">Active</option>
                     <option value="Injured">Injured</option>
@@ -687,13 +759,17 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Sport
                   </label>
                   <select
                     value={formSport}
                     onChange={(e) => setFormSport(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   >
                     {sports.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -704,16 +780,20 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                 </div>
 
                 <div>
-                  <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                  <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                     Team / Cohort
                   </label>
                   <select
                     value={formCohort}
                     onChange={(e) => setFormCohort(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                    className={`w-full px-3 py-2 rounded-xl outline-none font-medium ${
+                      sunlightMode
+                        ? 'bg-slate-50 border border-slate-300 text-slate-900 focus:border-[#013B83]'
+                        : 'bg-black/40 border border-slate-700 text-white focus:border-amber-400'
+                    }`}
                   >
-                    <option value="seniors">Seniors (Batch 2026)</option>
-                    <option value="juniors">Juniors (Batch 2027)</option>
+                    <option value="seniors">Seniors</option>
+                    <option value="juniors">Juniors</option>
                   </select>
                 </div>
               </div>
@@ -732,14 +812,14 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
       )}
 
       {/* MODAL 2: Edit Team / Cohort Metadata */}
-      {isEditTeamOpen && (
+      {isSportsCom && isEditTeamOpen && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in"
           onClick={() => setIsEditTeamOpen(false)}
         >
           <div
             className={`w-full max-w-sm rounded-t-3xl sm:rounded-2xl border-t sm:border p-5 sm:p-6 shadow-2xl relative pb-safe max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
-              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-700 text-white'
+              sunlightMode ? 'bg-white border-slate-200 text-slate-900 shadow-xl' : 'bg-slate-900 border-slate-700 text-white'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
@@ -747,7 +827,9 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
             <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mb-3 sm:hidden" />
             <button
               onClick={() => setIsEditTeamOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              className={`absolute top-4 right-4 p-1.5 rounded-lg ${
+                sunlightMode ? 'hover:bg-slate-100 text-slate-400 hover:text-slate-800' : 'hover:bg-slate-800 text-slate-400 hover:text-white'
+              }`}
             >
               ✕
             </button>
@@ -759,7 +841,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
 
             <form onSubmit={handleSaveTeam} className="space-y-3.5 text-xs">
               <div>
-                <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                   Team Name
                 </label>
                 <input
@@ -767,25 +849,33 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                   required
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  className={`w-full px-3 py-2 rounded-xl border outline-none ${
+                    sunlightMode
+                      ? 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-500'
+                      : 'bg-black/40 border-slate-700 text-white focus:border-amber-400'
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
-                  Batch Designation
+                <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                  Cohort Designation
                 </label>
                 <input
                   type="text"
                   required
                   value={teamBatch}
                   onChange={(e) => setTeamBatch(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-black/40 border border-slate-700 text-white focus:border-amber-400 outline-none"
+                  className={`w-full px-3 py-2 rounded-xl border outline-none ${
+                    sunlightMode
+                      ? 'bg-slate-50 border-slate-300 text-slate-900 focus:border-amber-500'
+                      : 'bg-black/40 border-slate-700 text-white focus:border-amber-400'
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="font-bold uppercase text-[10px] text-slate-400 block mb-1">
+                <label className={`font-bold uppercase text-[10px] block mb-1 ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
                   Team Theme Color
                 </label>
                 <div className="flex items-center gap-2">
@@ -795,7 +885,7 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
                     onChange={(e) => setTeamColor(e.target.value)}
                     className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
                   />
-                  <span className="font-mono text-slate-300 font-bold">{teamColor}</span>
+                  <span className={`font-mono font-bold ${sunlightMode ? 'text-slate-800' : 'text-slate-300'}`}>{teamColor}</span>
                 </div>
               </div>
 
@@ -813,15 +903,17 @@ export const ContingentTab: React.FC<ContingentTabProps> = ({ sunlightMode, curr
       )}
 
       {/* Add New Sport Modal (Sports Committee Only) */}
-      <AddSportModal
-        isOpen={isAddSportOpen}
-        onClose={() => setIsAddSportOpen(false)}
-        sunlightMode={sunlightMode}
-        onSportAdded={() => {
-          loadSports();
-          loadRoster();
-        }}
-      />
+      {isSportsCom && (
+        <AddSportModal
+          isOpen={isAddSportOpen}
+          onClose={() => setIsAddSportOpen(false)}
+          sunlightMode={sunlightMode}
+          onSportAdded={() => {
+            loadSports();
+            loadRoster();
+          }}
+        />
+      )}
     </div>
   );
 };

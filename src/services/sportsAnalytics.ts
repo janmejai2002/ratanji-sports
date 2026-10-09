@@ -1,6 +1,6 @@
 /**
  * Sports Data Science & Quantitative Analytics Engine
- * Ratanjee '26 - XLRI Delhi Annual Sports Festival
+ * Ratanjee - XLRI Delhi Inter-Batch Championship
  *
  * Implements mathematically grounded in-game analytics across 15 sports:
  * 1. Bayesian & Poisson / Normal Drift Win Probability Models
@@ -1117,14 +1117,14 @@ export function generateMatchInsights(
     if (homeCount >= 4 && awayCount <= 1) {
       insights.push({
         title: 'Seniors Momentum Surge',
-        detail: `Batch of 2026 has executed an unanswered flurry in recent phases, seizing court control.`,
+        detail: `Seniors have executed an unanswered flurry in recent phases, seizing court control.`,
         impact: 'positive',
         metric: `${homeCount}-1 Run`,
       });
     } else if (awayCount >= 4 && homeCount <= 1) {
       insights.push({
         title: 'Juniors Counter-Attack',
-        detail: `Batch of 2027 mounting a rapid response with intense attacking pressure.`,
+        detail: `Juniors mounting a rapid response with intense attacking pressure.`,
         impact: 'critical',
         metric: `${awayCount}-1 Run`,
       });
@@ -1189,7 +1189,7 @@ export function generateMatchInsights(
     title: 'Ratanjee Championship Standing',
     detail: 'Every match point in this fixture directly updates the overall XLRI inter-batch trophy points table.',
     impact: 'neutral',
-    metric: "Batch '26 vs '27",
+    metric: 'Seniors vs Juniors',
   });
 
   return insights;
