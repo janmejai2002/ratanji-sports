@@ -69,16 +69,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
           <div className="flex items-center gap-3">
             <div
-              className={`p-1.5 rounded-xl border flex items-center justify-center transition-all ${
+              className={`w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border transition-all ${
                 sunlightMode
-                  ? 'bg-white border-slate-200 shadow-sm'
-                  : 'bg-white/[0.04] border-white/10'
+                  ? 'border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/5'
+                  : 'border-white/10 bg-[#013B83] shadow-md ring-1 ring-white/15'
               }`}
             >
               <img
-                src="/xlri-shield-logo.png"
-                alt="XLRI Delhi Logo"
-                className="w-7 h-7 object-contain"
+                src="/xlri-shield-square.png"
+                alt="XLRI Delhi Crest"
+                className="w-full h-full object-cover"
               />
             </div>
             <div>
@@ -303,21 +303,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {/* Guide HTML Manual Link */}
-          <a
-            href="/docs/sports-committee-guide.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Read Sports Committee Operational Guide (HTML Manual)"
-            className={`p-2 rounded-xl border font-bold flex items-center gap-1.5 text-xs transition-all active:scale-95 ${
-              sunlightMode
-                ? 'bg-slate-100 text-[#013B83] border-slate-300 hover:bg-slate-200 shadow-sm'
-                : 'bg-slate-900 text-slate-300 border-white/10 hover:border-white/20 hover:text-white'
-            }`}
-          >
-            <FileText className="w-4 h-4 text-emerald-500" />
-            <span className="hidden lg:inline text-[11px] font-semibold">Guide</span>
-          </a>
+          {/* Guide HTML Manual Link - Only visible for authenticated Sports Committee */}
+          {isAuthenticated && currentUser.role === 'admin' && (
+            <a
+              href="/docs/sports-committee-guide.html?role=admin"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Read Sports Committee Operational Guide (HTML Manual)"
+              className={`p-2 rounded-xl border font-bold flex items-center gap-1.5 text-xs transition-all active:scale-95 ${
+                sunlightMode
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 shadow-sm'
+                  : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-emerald-500" />
+              <span className="hidden lg:inline text-[11px] font-semibold">Guide</span>
+            </a>
+          )}
 
           {/* Theme Mode Toggle */}
           <button

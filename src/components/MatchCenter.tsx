@@ -494,13 +494,13 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
       >
         <div className="flex items-center gap-3.5 w-full md:w-auto">
           <div
-            className={`p-2 rounded-xl border flex items-center justify-center shrink-0 ${
+            className={`w-11 h-11 rounded-xl overflow-hidden flex items-center justify-center shrink-0 border transition-all ${
               sunlightMode
-                ? 'bg-white border-slate-200 shadow-sm'
-                : 'bg-white/[0.04] border-white/10'
+                ? 'border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/5'
+                : 'border-white/10 bg-[#013B83] shadow-md ring-1 ring-white/15'
             }`}
           >
-            <img src="/xlri-shield-logo.png" alt="XLRI Logo" className="w-7 h-7 object-contain" />
+            <img src="/xlri-shield-square.png" alt="XLRI Delhi Crest" className="w-full h-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">

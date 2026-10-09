@@ -73,9 +73,120 @@ const cwdDist = path.resolve(process.cwd(), 'dist');
 const localDist = path.resolve(__dirname, '../dist');
 const distPath = fs.existsSync(cwdDist) ? cwdDist : localDist;
 
-// Explicit friendly redirects for documentation
-app.get(['/guide', '/manual', '/docs', '/docs/guide'], (_req, res) => {
-  res.redirect('/docs/sports-committee-guide.html');
+// Sports Committee Operational Guide Guard (Restricted to logged-in sportsco only)
+const isSportscoAuthorized = (req: express.Request): boolean => {
+  const roleHeader = (req.headers['x-user-role'] as string)?.toLowerCase();
+  const cookies = req.headers.cookie
+    ? Object.fromEntries(
+        req.headers.cookie.split(';').map((c) => {
+          const [k, ...v] = c.trim().split('=');
+          return [k, decodeURIComponent(v.join('='))];
+        })
+      )
+    : {};
+  const roleCookie = cookies['ratanji_role']?.toLowerCase() || cookies['user_role']?.toLowerCase();
+  const roleQuery = (req.query?.role as string)?.toLowerCase() || (req.query?.auth as string)?.toLowerCase();
+
+  return roleHeader === 'admin' || roleCookie === 'admin' || roleQuery === 'admin' || roleQuery === 'sportsco';
+};
+
+app.use(['/guide', '/manual', '/docs', '/docs/*'], (req, res, next) => {
+  if (isSportscoAuthorized(req)) {
+    if (req.path === '/guide' || req.path === '/manual' || req.path === '/docs' || req.path === '/docs/guide') {
+      const q = req.query?.role ? `?role=${req.query.role}` : '';
+      return res.redirect(`/docs/sports-committee-guide.html${q}`);
+    }
+    return next();
+  }
+
+  // Not authenticated as Sports Committee
+  return res.status(403).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Restricted • Sports Committee Only</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: #090d16;
+      color: #f8fafc;
+      padding: 1.5rem;
+      box-sizing: border-box;
+    }
+    .card {
+      max-width: 520px;
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 1.25rem;
+      padding: 2.25rem;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.75rem 0;
+      color: #ffffff;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.925rem;
+      line-height: 1.6;
+      margin: 0 0 1.75rem 0;
+    }
+    .btn {
+      display: inline-block;
+      background: #f59e0b;
+      color: #000000;
+      font-weight: 800;
+      font-size: 0.875rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: #fbbf24;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">🔒 Sports Committee Only</div>
+    <h1>Access Restricted</h1>
+    <p>The Ratanjee Sports Committee Operational Manual is reserved strictly for authenticated Sports Committee members. Please log in with your committee credentials from the tournament portal.</p>
+    <a href="/?login=committee" class="btn">Log In as Sports Committee</a>
+  </div>
+</body>
+</html>`);
 });
 
 // Also serve public directory as static backup

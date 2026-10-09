@@ -12,8 +12,28 @@ import { getOrCreateAnonymousUser } from './utils/anonymous';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'matchCenter' | 'contingent' | 'referee' | 'admin'>('matchCenter');
-  const [currentUser, setCurrentUser] = useState<UserSession>(() => getOrCreateAnonymousUser());
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<UserSession>(() => {
+    try {
+      const saved = localStorage.getItem('ratanjee_auth_user');
+      if (saved) {
+        const u = JSON.parse(saved);
+        if (u && (u.role === 'admin' || u.role === 'referee')) {
+          return u;
+        }
+      }
+    } catch {}
+    return getOrCreateAnonymousUser();
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('ratanjee_auth_user');
+      if (saved) {
+        const u = JSON.parse(saved);
+        return Boolean(u && (u.role === 'admin' || u.role === 'referee'));
+      }
+    } catch {}
+    return false;
+  });
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [loginInitialTab, setLoginInitialTab] = useState<'referee' | 'committee'>('committee');
 
@@ -23,6 +43,21 @@ export default function App() {
 
   const [matches, setMatches] = useState<any[]>([]);
   const [standings, setStandings] = useState<any[]>([]);
+
+  // Check URL query parameters for direct login triggers (e.g. from 403 access restricted page)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const loginParam = params.get('login');
+      if (loginParam === 'committee') {
+        setLoginInitialTab('committee');
+        setIsLoginModalOpen(true);
+      } else if (loginParam === 'referee') {
+        setLoginInitialTab('referee');
+        setIsLoginModalOpen(true);
+      }
+    } catch {}
+  }, []);
 
   // Load matches and standings with current RBAC context
   const loadData = useCallback(() => {
@@ -44,6 +79,11 @@ export default function App() {
   const handleLoginSuccess = (user: AuthenticatedUser) => {
     setCurrentUser(user);
     setIsAuthenticated(true);
+    try {
+      localStorage.setItem('ratanjee_auth_user', JSON.stringify(user));
+      document.cookie = `ratanji_role=${user.role}; path=/; max-age=86400; SameSite=Lax`;
+      document.cookie = `ratanji_user=${user.id}; path=/; max-age=86400; SameSite=Lax`;
+    } catch {}
     if (user.role === 'admin') {
       setActiveTab('admin');
     } else if (user.role === 'referee') {
@@ -58,6 +98,11 @@ export default function App() {
     const anon = getOrCreateAnonymousUser();
     setCurrentUser(anon);
     setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('ratanjee_auth_user');
+      document.cookie = 'ratanji_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'ratanji_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    } catch {}
     setActiveTab('matchCenter');
     sounds.playWhistle();
   };
@@ -207,8 +252,10 @@ export default function App() {
         }`}
       >
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <img src="/xlri-shield-logo.png" alt="XLRI Logo" className="h-5 w-auto object-contain opacity-80" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-md overflow-hidden shrink-0 border border-white/10 shadow-sm bg-[#013B83]">
+              <img src="/xlri-shield-square.png" alt="XLRI Crest" className="w-full h-full object-cover" />
+            </div>
             <span className="font-semibold text-slate-400">
               RATANJEE &bull; XLRI Delhi Sports Committee
             </span>

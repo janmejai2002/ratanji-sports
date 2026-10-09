@@ -108,4 +108,23 @@ describe('Role-Based Access Control (RBAC)', () => {
     const pRes = await api.post(`/api/matches/${sampleMatchId}/publish`, {}, ADMIN_HEADERS);
     expect([200, 201]).toContain(pRes.status);
   });
+
+  it('Public spectator and unauthenticated requests are blocked from accessing Sports Committee guide (403)', async () => {
+    const unauthGuide = await api.get('/guide', ANONYMOUS_HEADERS);
+    expect(unauthGuide.status).toBe(403);
+
+    const unauthDocs = await api.get('/docs/sports-committee-guide.html', SPECTATOR_HEADERS);
+    expect(unauthDocs.status).toBe(403);
+
+    const refDocs = await api.get('/docs/sports-committee-guide.html', REFEREE_HEADERS('ref-1'));
+    expect(refDocs.status).toBe(403);
+  });
+
+  it('Authenticated Sports Committee Admin has full access to operational guide', async () => {
+    const adminDocs = await api.get('/docs/sports-committee-guide.html', ADMIN_HEADERS);
+    expect(adminDocs.status).toBe(200);
+
+    const adminGuide = await api.get('/guide', ADMIN_HEADERS);
+    expect([200, 302]).toContain(adminGuide.status);
+  });
 });

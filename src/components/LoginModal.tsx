@@ -134,9 +134,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           }`}
         >
           <div className="flex items-center gap-3">
-            <span className="p-2 rounded-xl bg-amber-500 text-black font-black flex items-center justify-center shadow-md">
-              <Lock className="w-5 h-5" />
-            </span>
+            <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-white/10 shadow-md bg-[#013B83]">
+              <img src="/xlri-shield-square.png" alt="XLRI Crest" className="w-full h-full object-cover" />
+            </div>
             <div>
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight flex items-center gap-2">
                 Official Tournament Sign In

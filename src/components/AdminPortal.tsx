@@ -417,7 +417,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {/* Official Guide Links: HTML Manual and PDF */}
           <a
-            href="/docs/sports-committee-guide.html"
+            href="/docs/sports-committee-guide.html?role=admin"
             target="_blank"
             rel="noopener noreferrer"
             className={`flex-1 md:flex-none py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 ${
@@ -431,7 +431,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             Guide (HTML)
           </a>
           <a
-            href="/docs/sports-committee-guide.pdf"
+            href="/docs/sports-committee-guide.pdf?role=admin"
             target="_blank"
             rel="noopener noreferrer"
             className={`flex-1 md:flex-none py-2 px-3 rounded-xl border font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95 ${

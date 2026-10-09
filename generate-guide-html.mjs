@@ -16,7 +16,7 @@ function getBase64Img(imgPath) {
   return '';
 }
 
-const logoBase64 = getBase64Img('C:\\Users\\Janmejai\\adj\\ratanji_sports\\public\\xlri-shield-logo.png');
+const logoBase64 = getBase64Img('C:\\Users\\Janmejai\\adj\\ratanji_sports\\public\\xlri-shield-square.png');
 const mcImg = getBase64Img(path.join(SCREENSHOTS_DIR, 'xlri-light-mobile-matchcenter.png'));
 const stImg = getBase64Img(path.join(SCREENSHOTS_DIR, 'xlri-light-mobile-standings.png'));
 const ctImg = getBase64Img(path.join(SCREENSHOTS_DIR, 'xlri-light-mobile-contingents.png'));
@@ -94,7 +94,9 @@ const htmlContent = `<!DOCTYPE html>
     .brand-logo {
       width: 44px;
       height: 44px;
-      object-fit: contain;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(1, 59, 131, 0.2);
     }
 
     .brand-titles h1 {
