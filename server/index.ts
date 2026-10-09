@@ -18,6 +18,7 @@ import { rostersRouter } from './routes/rosters.js';
 import { standingsRouter } from './routes/standings.js';
 import { demoRouter } from './routes/demo.js';
 import { refereesRouter } from './routes/referees.js';
+import { banterRouter } from './routes/banter.js';
 import { broadcaster } from './realtime/broadcaster.js';
 
 export const app = express();
@@ -49,6 +50,7 @@ app.use('/api/matches', matchesRouter);
 app.use('/api/admin/verifications', verificationRouter);
 app.use('/api/standings', standingsRouter);
 app.use('/api/referees', refereesRouter);
+app.use('/api/banter', banterRouter);
 app.use('/api/demo', demoRouter);
 
 // Real-time SSE event stream endpoint

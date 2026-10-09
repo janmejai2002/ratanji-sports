@@ -96,6 +96,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       await api.post('/api/admin/verifications/reset-tournament', {}, 'admin');
       sounds.playWhistle();
       onRefresh();
+      loadContingentSummary();
       setIsResetConfirmOpen(false);
       setNotification('Tournament successfully reset to pristine Day 0 state (0 matches, 0-0 standings).');
     } catch (err: any) {
@@ -138,9 +139,30 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     }
   };
 
+  // Dynamic Cohort Squad Counts
+  const [contingentSummary, setContingentSummary] = useState({
+    seniorCount: 0,
+    juniorCount: 0,
+    totalCount: 0,
+    injuredCount: 0,
+    activeCount: 0,
+  });
+
+  const loadContingentSummary = async () => {
+    try {
+      const data = await api.get<any>('/api/contingent/summary');
+      if (data) {
+        setContingentSummary(data);
+      }
+    } catch (err) {
+      console.error('Failed to load contingent summary:', err);
+    }
+  };
+
   useEffect(() => {
     loadSports();
     loadReferees();
+    loadContingentSummary();
   }, []);
 
   // Set default initial sport and referee if empty
@@ -453,12 +475,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       >
         <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
           <span className="text-[11px] font-bold text-slate-400 block">Senior Squad</span>
-          <span className="text-2xl font-black font-mono text-blue-400">186</span>
+          <span className="text-2xl font-black font-mono text-blue-400">{contingentSummary.seniorCount}</span>
         </div>
 
         <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
           <span className="text-[11px] font-bold text-slate-400 block">Junior Squad</span>
-          <span className="text-2xl font-black font-mono text-emerald-400">204</span>
+          <span className="text-2xl font-black font-mono text-emerald-400">{contingentSummary.juniorCount}</span>
         </div>
 
         <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
@@ -1050,60 +1072,77 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       )}
 
       {/* TAB 4: Cohort Standings & Points */}
-      {activeTab === 'standings' && (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-black uppercase tracking-wider flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400" />
-              Ratanjee 2026 Memorial Trophy &bull; Cohort Championship Standings
-            </h2>
-          </div>
+      {activeTab === 'standings' && (() => {
+        const seniorStanding = Array.isArray(standings)
+          ? standings.find((s) => s.cohort_id === 'cohort-seniors' || s.cohort_name?.toLowerCase().includes('senior'))
+          : null;
+        const juniorStanding = Array.isArray(standings)
+          ? standings.find((s) => s.cohort_id === 'cohort-juniors' || s.cohort_name?.toLowerCase().includes('junior'))
+          : null;
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Senior Cohort Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-900 border border-blue-800/40 flex flex-col justify-between gap-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase text-blue-400 tracking-wider">
-                    Defending Champions
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-xs font-bold">
-                    Batch 2026
-                  </span>
-                </div>
-                <h3 className="text-2xl font-black text-white">Seniors (BM &amp; HRM 26)</h3>
-                <p className="text-xs text-slate-400 mt-1">14 Wins &bull; 8 Losses</p>
-              </div>
-
-              <div className="flex items-baseline justify-between pt-4 border-t border-blue-900/40">
-                <span className="text-xs text-slate-400">Total Trophy Points</span>
-                <span className="text-4xl font-black font-mono text-blue-400">42 pts</span>
-              </div>
+        return (
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-black uppercase tracking-wider flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-amber-400" />
+                Ratanjee 2026 Memorial Trophy &bull; Cohort Championship Standings
+              </h2>
             </div>
 
-            {/* Junior Cohort Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-800/40 flex flex-col justify-between gap-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">
-                    Challengers
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold">
-                    Batch 2027
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Senior Cohort Card */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-900 border border-blue-800/40 flex flex-col justify-between gap-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black uppercase text-blue-400 tracking-wider">
+                      Defending Champions
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-xs font-bold">
+                      Batch 2026
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-white">Seniors (BM &amp; HRM 26)</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {seniorStanding?.won ?? 0} Wins &bull; {seniorStanding?.lost ?? 0} Losses &bull; {seniorStanding?.drawn ?? 0} Draws
+                  </p>
+                </div>
+
+                <div className="flex items-baseline justify-between pt-4 border-t border-blue-900/40">
+                  <span className="text-xs text-slate-400">Total Trophy Points</span>
+                  <span className="text-4xl font-black font-mono text-blue-400">
+                    {seniorStanding?.total_points ?? 0} pts
                   </span>
                 </div>
-                <h3 className="text-2xl font-black text-white">Juniors (BM &amp; HRM 27)</h3>
-                <p className="text-xs text-slate-400 mt-1">11 Wins &bull; 10 Losses</p>
               </div>
 
-              <div className="flex items-baseline justify-between pt-4 border-t border-emerald-900/40">
-                <span className="text-xs text-slate-400">Total Trophy Points</span>
-                <span className="text-4xl font-black font-mono text-emerald-400">33 pts</span>
+              {/* Junior Cohort Card */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-800/40 flex flex-col justify-between gap-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">
+                      Challengers
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold">
+                      Batch 2027
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-white">Juniors (BM &amp; HRM 27)</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {juniorStanding?.won ?? 0} Wins &bull; {juniorStanding?.lost ?? 0} Losses &bull; {juniorStanding?.drawn ?? 0} Draws
+                  </p>
+                </div>
+
+                <div className="flex items-baseline justify-between pt-4 border-t border-emerald-900/40">
+                  <span className="text-xs text-slate-400">Total Trophy Points</span>
+                  <span className="text-4xl font-black font-mono text-emerald-400">
+                    {juniorStanding?.total_points ?? 0} pts
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* MODAL 1: Schedule New Match Modal Dialog */}
       {isNewMatchOpen && (

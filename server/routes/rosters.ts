@@ -103,6 +103,31 @@ rostersRouter.get('/', (req: Request, res: Response) => {
   }
 });
 
+rostersRouter.get('/summary', (_req: Request, res: Response) => {
+  try {
+    const seniorRow = db.queryOne<{ cnt: number }>(
+      "SELECT count(*) as cnt FROM players WHERE cohort_id = 'cohort-seniors'"
+    );
+    const juniorRow = db.queryOne<{ cnt: number }>(
+      "SELECT count(*) as cnt FROM players WHERE cohort_id = 'cohort-juniors'"
+    );
+    const totalRow = db.queryOne<{ cnt: number }>('SELECT count(*) as cnt FROM players');
+    const injuredRow = db.queryOne<{ cnt: number }>(
+      "SELECT count(*) as cnt FROM players WHERE UPPER(status) = 'INJURED'"
+    );
+
+    res.json({
+      seniorCount: seniorRow?.cnt ?? 0,
+      juniorCount: juniorRow?.cnt ?? 0,
+      totalCount: totalRow?.cnt ?? 0,
+      injuredCount: injuredRow?.cnt ?? 0,
+      activeCount: (totalRow?.cnt ?? 0) - (injuredRow?.cnt ?? 0),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to get roster summary', message: err.message });
+  }
+});
+
 rostersRouter.get('/:id', (req: Request, res: Response) => {
   try {
     const id = req.params.id;

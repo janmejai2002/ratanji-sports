@@ -35,44 +35,6 @@ interface LoginModalProps {
   initialTab?: 'referee' | 'committee';
 }
 
-export const COMMITTEE_PRESETS = [
-  {
-    id: 'usr-admin-1',
-    role: 'admin' as const,
-    name: 'Sports Committee Admin',
-    email: 'admin@xlri.edu',
-    password: 'xlri-admin-2026',
-    badge: 'Committee Executive',
-    description: 'Full tournament control: audit submissions, 1-click verify & publish scores to official standings, and schedule matches.',
-    icon: Shield,
-    color: 'amber',
-  },
-];
-
-export const REFEREE_PRESETS = [
-  {
-    id: 'usr-ref-1',
-    code: 'REF-023',
-    name: 'Rohan Verma',
-    specialty: 'Football & Futsal',
-    badge: 'Official Referee (REF-023)',
-  },
-  {
-    id: 'usr-ref-2',
-    code: 'REF-045',
-    name: 'Pooja Sharma',
-    specialty: 'Basketball & Volleyball',
-    badge: 'Official Referee (REF-045)',
-  },
-  {
-    id: 'usr-ref-3',
-    code: 'REF-012',
-    name: 'Amitabh Sen',
-    specialty: 'Racquet Sports & Cricket',
-    badge: 'Official Referee (REF-012)',
-  },
-];
-
 export const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,
@@ -82,7 +44,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 }) => {
   const [tab, setTab] = useState<'referee' | 'committee'>(initialTab);
   const [refereeCode, setRefereeCode] = useState('');
-  const [refereesList, setRefereesList] = useState<any[]>(REFEREE_PRESETS);
 
   // Committee credentials
   const [email, setEmail] = useState('');
@@ -90,22 +51,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [copiedPassId, setCopiedPassId] = useState<string | null>(null);
 
   // Sync initial tab when reopened
   useEffect(() => {
     if (isOpen) {
       setTab(initialTab);
       setErrorMessage(null);
-      // Fetch live referees from server
-      fetch('/api/referees')
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (Array.isArray(data) && data.length > 0) {
-            setRefereesList(data);
-          }
-        })
-        .catch(() => {});
     }
   }, [isOpen, initialTab]);
 
@@ -159,13 +110,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const copyPassword = (id: string, pass: string) => {
-    sounds.playClick();
-    navigator.clipboard.writeText(pass);
-    setCopiedPassId(id);
-    setTimeout(() => setCopiedPassId(null), 2000);
   };
 
   return (

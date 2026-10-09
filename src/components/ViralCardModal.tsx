@@ -29,14 +29,17 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
 
   const isHomeWinner = match.score_home > match.score_away;
   const isDraw = match.score_home === match.score_away;
-  const winner = isDraw ? 'DRAW' : isHomeWinner ? match.home_cohort_name : match.away_cohort_name;
-  const loser = isDraw ? '' : isHomeWinner ? match.away_cohort_name : match.home_cohort_name;
+  const homeName = match.home_cohort_name || 'Seniors';
+  const awayName = match.away_cohort_name || 'Juniors';
+  const winner = isDraw ? 'DRAW' : isHomeWinner ? homeName : awayName;
+  const loser = isDraw ? '' : isHomeWinner ? awayName : homeName;
 
   const savageHeadline = isDraw
-    ? `DEADLOCK AT XLRI! ${match.home_cohort_name} and ${match.away_cohort_name} split the spoils in ${match.sport_name}! ⚔️🔥`
-    : `${winner.toUpperCase()} JUST COOKED ${loser.toUpperCase()} ${Math.max(match.score_home, match.score_away)}-${Math.min(match.score_home, match.score_away)} IN ${match.sport_name.toUpperCase()}! 💀🔥`;
+    ? `DEADLOCK AT XLRI! ${homeName} and ${awayName} split the spoils in ${match.sport_name || 'Match'}! ⚔️🔥`
+    : `${winner.toUpperCase()} JUST COOKED ${loser.toUpperCase()} ${Math.max(match.score_home, match.score_away)}-${Math.min(match.score_home, match.score_away)} IN ${(match.sport_name || 'Match').toUpperCase()}! 💀🔥`;
 
-  const storyText = `🏆 RATANJEE 2026 | XLRI DELHI\n⚡ ${match.sport_name} Championship\n\n${savageHeadline}\n\n📍 Venue: ${match.venue || 'XLRI Grounds'}\n📊 Final Score: ${match.home_cohort_name} ${match.score_home} - ${match.score_away} ${match.away_cohort_name}\n\nLive scores & banter: https://ratanjee.xlri.ac.in`;
+  const appOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://ratanjee-sports.onrender.com';
+  const storyText = `🏆 RATANJEE 2026 | XLRI DELHI\n⚡ ${match.sport_name || 'Sports'} Championship\n\n${savageHeadline}\n\n📍 Venue: ${match.venue || 'XLRI Grounds'}\n📊 Final Score: ${homeName} ${match.score_home} - ${match.score_away} ${awayName}\n\nLive scores & banter: ${appOrigin}`;
 
   const copyToClipboard = () => {
     sounds.playClick(1200);

@@ -70,6 +70,11 @@ verificationRouter.post('/reset-tournament', requireAdmin, (_req: Request, res: 
     const db = getDatabase();
     seedDatabase(db, { clean: true, cleanOnly: true });
 
+    try {
+      db.execute('DELETE FROM banter_posts;');
+      db.execute("UPDATE campus_hype SET hype_count = 0;");
+    } catch {}
+
     broadcaster.broadcast('all', {
       type: 'TOURNAMENT_RESET',
       message: 'Tournament has been reset to pristine Day 0 state (0 matches, 0-0 standings)',

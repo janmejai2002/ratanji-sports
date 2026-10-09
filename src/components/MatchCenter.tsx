@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Flame,
   Clock,
@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { sounds } from '../utils/audio';
 import { mobileHaptics } from '../utils/haptics';
+import { api } from '../utils/api';
 import { ViralCardModal } from './ViralCardModal';
 import { ShareMatchModal } from './ShareMatchModal';
 import { InfoTooltip } from './InfoTooltip';
@@ -80,45 +81,39 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
     } catch {}
   };
 
-  // Social Features: Inter-Batch Tug-of-War Hype Meter
-  const [seniorHype, setSeniorHype] = useState(1420);
-  const [juniorHype, setJuniorHype] = useState(1280);
+  // Social Features: Inter-Batch Tug-of-War Hype Meter (Clean Day 0 Start: 0-0)
+  const [seniorHype, setSeniorHype] = useState(0);
+  const [juniorHype, setJuniorHype] = useState(0);
 
-  // Social Features: Campus Live Banter Stream
-  const [banterFeed, setBanterFeed] = useState<BanterItem[]>([
-    {
-      id: 'b-1',
-      author: 'Aarav (BM 26)',
-      batch: 'Senior',
-      text: 'Seniors striker just chipped the goalkeeper from 30 yards out. It is actually OVER for juniors 💀🔥',
-      time: '2m ago',
-      reactions: { cooked: 24, savage: 18, w: 32, ratio: 2 },
-    },
-    {
-      id: 'b-2',
-      author: 'Priya (HRM 27)',
-      batch: 'Junior',
-      text: 'Do not celebrate early seniors!! Our badminton singles captain has not even stepped on the court yet ⚡🏸',
-      time: '4m ago',
-      reactions: { cooked: 5, savage: 12, w: 29, ratio: 7 },
-    },
-    {
-      id: 'b-3',
-      author: 'Kabir (BM 26)',
-      batch: 'Senior',
-      text: 'Standings gap is widening... seniors at 7 points. Junior batch please send help 😂🏆',
-      time: '7m ago',
-      reactions: { cooked: 41, savage: 19, w: 55, ratio: 1 },
-    },
-  ]);
+  // Social Features: Campus Live Banter Stream (Clean Day 0 Start: Empty Feed)
+  const [banterFeed, setBanterFeed] = useState<BanterItem[]>([]);
   const [banterInput, setBanterInput] = useState('');
   const [banterBatch, setBanterBatch] = useState<'Senior' | 'Junior'>('Senior');
 
-  const totalHype = seniorHype + juniorHype;
-  const seniorHypePct = Math.round((seniorHype / totalHype) * 100);
-  const juniorHypePct = 100 - seniorHypePct;
+  // Load banter feed and campus hype from API
+  useEffect(() => {
+    api.get<any[]>('/api/banter')
+      .then((data) => {
+        if (Array.isArray(data)) setBanterFeed(data);
+      })
+      .catch(() => {});
 
-  const triggerHype = (batch: 'Senior' | 'Junior') => {
+    api.get<any>('/api/banter/hype')
+      .then((data) => {
+        if (data) {
+          setSeniorHype(data.seniorHype ?? 0);
+          setJuniorHype(data.juniorHype ?? 0);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const totalHype = seniorHype + juniorHype;
+  // Guard against division-by-zero (0/0 = NaN) when starting at clean Day 0
+  const seniorHypePct = totalHype === 0 ? 50 : Math.round((seniorHype / totalHype) * 100);
+  const juniorHypePct = totalHype === 0 ? 50 : 100 - seniorHypePct;
+
+  const triggerHype = async (batch: 'Senior' | 'Junior') => {
     sounds.playArcadeCoin();
     sounds.playCheer();
     mobileHaptics.highImpact();
@@ -127,27 +122,44 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
     } else {
       setJuniorHype((prev) => prev + 12);
     }
+    try {
+      const res = await api.post<any>('/api/banter/hype', { batch, amount: 12 });
+      if (res) {
+        setSeniorHype(res.seniorHype ?? 0);
+        setJuniorHype(res.juniorHype ?? 0);
+      }
+    } catch {}
   };
 
-  const handlePostBanter = (e: React.FormEvent) => {
+  const handlePostBanter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!banterInput.trim()) return;
 
     sounds.playClick();
+    const tempId = 'b-' + Date.now();
+    const author = banterBatch === 'Senior' ? 'Senior Fan (BM 26)' : 'Junior Fan (HRM 27)';
+    const text = banterInput.trim();
     const newItem: BanterItem = {
-      id: 'b-' + Date.now(),
-      author: banterBatch === 'Senior' ? 'Senior Fan (BM 26)' : 'Junior Fan (HRM 27)',
+      id: tempId,
+      author,
       batch: banterBatch,
-      text: banterInput.trim(),
+      text,
       time: 'Just now',
       reactions: { cooked: 0, savage: 0, w: 1, ratio: 0 },
     };
 
-    setBanterFeed([newItem, ...banterFeed]);
+    setBanterFeed((prev) => [newItem, ...prev]);
     setBanterInput('');
+
+    try {
+      const serverPost = await api.post<any>('/api/banter', { author, batch: banterBatch, text });
+      if (serverPost) {
+        setBanterFeed((prev) => [serverPost, ...prev.filter((p) => p.id !== tempId)]);
+      }
+    } catch {}
   };
 
-  const handleReaction = (banterId: string, type: 'cooked' | 'savage' | 'w' | 'ratio') => {
+  const handleReaction = async (banterId: string, type: 'cooked' | 'savage' | 'w' | 'ratio') => {
     sounds.playClick(900);
     setBanterFeed((prev) =>
       prev.map((item) => {
@@ -156,13 +168,16 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
             ...item,
             reactions: {
               ...item.reactions,
-              [type]: item.reactions[type] + 1,
+              [type]: (item.reactions[type] || 0) + 1,
             },
           };
         }
         return item;
       })
     );
+    try {
+      await api.post(`/api/banter/${banterId}/react`, { type });
+    } catch {}
   };
 
   // Group matches cleanly
@@ -274,8 +289,8 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
           <div className="p-3.5 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between gap-4 mb-3 shadow-inner">
             {/* Home (Seniors) */}
             <div className="flex-1 text-center">
-              <span className="text-[10px] font-black text-blue-400 block uppercase tracking-wider">
-                Seniors '26
+              <span className="text-[10px] font-black text-blue-400 block uppercase tracking-wider truncate">
+                {m.home_cohort_name || "Seniors '26"}
               </span>
               <span className="arcade-score-text text-4xl sm:text-5xl font-black italic tracking-tighter text-blue-400 tabular-nums">
                 {m.score_home ?? 0}
@@ -288,8 +303,8 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
 
             {/* Away (Juniors) */}
             <div className="flex-1 text-center">
-              <span className="text-[10px] font-black text-emerald-400 block uppercase tracking-wider">
-                Juniors '27
+              <span className="text-[10px] font-black text-emerald-400 block uppercase tracking-wider truncate">
+                {m.away_cohort_name || "Juniors '27"}
               </span>
               <span className="arcade-score-text text-4xl sm:text-5xl font-black italic tracking-tighter text-emerald-400 tabular-nums">
                 {m.score_away ?? 0}
@@ -574,7 +589,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                       </div>
 
                       <div className="text-xs font-bold text-white mb-2">
-                        Seniors '26 <span className="text-slate-500 font-normal">vs</span> Juniors '27
+                        {m.home_cohort_name || "Seniors '26"} <span className="text-slate-500 font-normal">vs</span> {m.away_cohort_name || "Juniors '27"}
                       </div>
                     </div>
 
@@ -801,46 +816,56 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
 
             {/* Feed List */}
             <div className="flex flex-col gap-3 max-h-[420px] overflow-y-auto pr-1">
-              {banterFeed.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-3.5 rounded-xl bg-black/40 border border-white/5 flex flex-col gap-2"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <span
-                      className={`font-black ${
-                        item.batch === 'Senior' ? 'text-blue-400' : 'text-emerald-400'
-                      }`}
-                    >
-                      {item.author}
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-mono">{item.time}</span>
-                  </div>
-
-                  <p className="text-xs text-slate-200 leading-relaxed">{item.text}</p>
-
-                  <div className="flex items-center gap-2 pt-1 border-t border-white/5 text-[11px] font-mono">
-                    <button
-                      onClick={() => handleReaction(item.id, 'cooked')}
-                      className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
-                    >
-                      💀 Cooked ({item.reactions.cooked})
-                    </button>
-                    <button
-                      onClick={() => handleReaction(item.id, 'savage')}
-                      className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
-                    >
-                      🔥 Savage ({item.reactions.savage})
-                    </button>
-                    <button
-                      onClick={() => handleReaction(item.id, 'w')}
-                      className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
-                    >
-                      🏆 W ({item.reactions.w})
-                    </button>
-                  </div>
+              {banterFeed.length === 0 ? (
+                <div className="py-10 px-4 text-center rounded-xl bg-black/30 border border-dashed border-slate-800 flex flex-col items-center justify-center gap-2">
+                  <MessageSquare className="w-8 h-8 text-slate-600 mb-1" />
+                  <p className="text-xs font-bold text-slate-300">No campus banter posted yet</p>
+                  <p className="text-[11px] text-slate-500 max-w-xs">
+                    Be the first to drop spicy hype or support your batch athletes in the chat above!
+                  </p>
                 </div>
-              ))}
+              ) : (
+                banterFeed.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-xl bg-black/40 border border-white/5 flex flex-col gap-2"
+                  >
+                    <div className="flex items-center justify-between text-xs">
+                      <span
+                        className={`font-black ${
+                          item.batch === 'Senior' ? 'text-blue-400' : 'text-emerald-400'
+                        }`}
+                      >
+                        {item.author}
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-mono">{item.time}</span>
+                    </div>
+
+                    <p className="text-xs text-slate-200 leading-relaxed">{item.text}</p>
+
+                    <div className="flex items-center gap-2 pt-1 border-t border-white/5 text-[11px] font-mono">
+                      <button
+                        onClick={() => handleReaction(item.id, 'cooked')}
+                        className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
+                      >
+                        💀 Cooked ({item.reactions.cooked})
+                      </button>
+                      <button
+                        onClick={() => handleReaction(item.id, 'savage')}
+                        className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
+                      >
+                        🔥 Savage ({item.reactions.savage})
+                      </button>
+                      <button
+                        onClick={() => handleReaction(item.id, 'w')}
+                        className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 transition"
+                      >
+                        🏆 W ({item.reactions.w})
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

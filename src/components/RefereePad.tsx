@@ -42,12 +42,12 @@ export const RefereePad: React.FC<RefereePadProps> = ({
   currentUser,
 }) => {
   // Official Profile
-  const officialName = currentUser?.name || 'Rohan Verma';
+  const officialName = currentUser?.name || 'Certified Official';
   const officialId =
     currentUser?.code ||
     currentUser?.badge?.match(/\((REF-[^)]+)\)/)?.[1] ||
     currentUser?.id ||
-    'REF-023';
+    'REF-OFFICIAL';
 
   // Matches list from API
   const [matches, setMatches] = useState<any[]>([]);
@@ -99,7 +99,7 @@ export const RefereePad: React.FC<RefereePadProps> = ({
   const selectMatch = (m: any) => {
     sounds.playClick();
     setSelectedMatch(m);
-    setTimerSeconds(m.current_time_seconds || 1800);
+    setTimerSeconds(m.current_time_seconds ?? 0);
     setCurrentPeriod(m.current_period || '1st Half');
     setIsTimerRunning(m.status === 'Draft' || m.status === 'Live');
 
@@ -450,7 +450,7 @@ export const RefereePad: React.FC<RefereePadProps> = ({
                       </div>
 
                       <div className="text-xs font-bold text-white flex justify-between">
-                        <span>Seniors vs Juniors</span>
+                        <span>{m.home_cohort_name || 'Seniors'} vs {m.away_cohort_name || 'Juniors'}</span>
                         <span className="font-mono text-amber-300 font-black">
                           {m.score_home} - {m.score_away}
                         </span>
@@ -485,7 +485,7 @@ export const RefereePad: React.FC<RefereePadProps> = ({
                       {selectedMatch.sport_name || selectedMatch.sport_id?.replace('sport-', '').toUpperCase()} &bull; {selectedMatch.venue}
                     </span>
                     <h3 className="text-base font-black text-white">
-                      Seniors (Batch 2026) <span className="text-slate-500 font-normal">vs</span> Juniors (Batch 2027)
+                      {selectedMatch.home_cohort_name || 'Seniors (Batch 2026)'} <span className="text-slate-500 font-normal">vs</span> {selectedMatch.away_cohort_name || 'Juniors (Batch 2027)'}
                     </h3>
                   </div>
 
@@ -1138,8 +1138,16 @@ export const RefereePad: React.FC<RefereePadProps> = ({
               </div>
             </>
           ) : (
-            <div className="p-12 rounded-2xl border border-dashed border-slate-800 text-center text-slate-400">
-              Select an assigned match from the left sidebar to start referee scoring.
+            <div className="p-12 rounded-2xl border border-dashed border-slate-800 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
+              <Clock className="w-8 h-8 text-amber-500/50 mb-1" />
+              <p className="text-sm font-bold text-slate-300">
+                {matches.length === 0 ? 'No Matches Scheduled Yet' : 'No Fixture Selected'}
+              </p>
+              <p className="text-xs text-slate-500 max-w-sm">
+                {matches.length === 0
+                  ? 'The tournament is currently in pristine Day 0 state. Matches will appear here once the Sports Committee schedules fixtures in the Admin Portal.'
+                  : 'Select an assigned fixture from the list to start live scoring, period control, and official logging.'}
+              </p>
             </div>
           )}
         </div>

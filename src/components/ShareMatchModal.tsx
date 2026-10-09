@@ -27,8 +27,8 @@ export const ShareMatchModal: React.FC<ShareMatchModalProps> = ({
   const timeMin = match.current_time_seconds ? `${Math.floor(match.current_time_seconds / 60)}' min` : '';
   const venue = match.venue || 'XLRI Sports Arena';
 
-  // Format sharable URL (uses window.location.origin or local LAN ip)
-  const currentHost = typeof window !== 'undefined' ? window.location.origin : 'http://10.1.57.20:5173';
+  // Format sharable URL (uses window.location.origin or live Render host)
+  const currentHost = typeof window !== 'undefined' ? window.location.origin : 'https://ratanjee-sports.onrender.com';
   const trackingLink = `${currentHost}/?match=${match.id}`;
 
   // WhatsApp formatted message with emojis and clear status
@@ -36,7 +36,7 @@ export const ShareMatchModal: React.FC<ShareMatchModalProps> = ({
 `🏆 *XLRI DELHI RATANJEE 2026 • LIVE MATCH UPDATE*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚡ *${sportName.toUpperCase()}*
-⚔️ *Seniors '26* [ ${homeScore} - ${awayScore} ] *Juniors '27*
+⚔️ *${match.home_cohort_name || "Seniors '26"}* [ ${homeScore} - ${awayScore} ] *${match.away_cohort_name || "Juniors '27"}*
 ⏱️ *Status:* ${match.status === 'Draft' || match.status === 'Live' ? '🔴 LIVE' : match.status} (${period}${timeMin ? ` • ${timeMin}` : ''})
 📍 *Venue:* ${venue}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
