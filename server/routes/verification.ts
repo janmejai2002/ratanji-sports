@@ -1,6 +1,9 @@
 import { Router, type Request, type Response } from 'express';
 import { getVerificationQueue, transitionMatch } from '../services/lifecycle.js';
 import { requireAdmin, extractUser } from '../services/rbac.js';
+import { getDatabase } from '../db/client.js';
+import { seedDatabase } from '../db/seed.js';
+import { broadcaster } from '../realtime/broadcaster.js';
 
 export const verificationRouter = Router();
 
@@ -56,4 +59,28 @@ verificationRouter.post('/:id/reject', requireAdmin, (req: Request, res: Respons
     return res.status(result.statusCode).json({ error: result.error });
   }
   res.json(result.match);
+});
+
+/**
+ * POST /api/admin/verifications/reset-tournament
+ * Clean slate reset: wipes all mock matches, audits, events, and resets standings to 0-0.
+ */
+verificationRouter.post('/reset-tournament', requireAdmin, (_req: Request, res: Response) => {
+  try {
+    const db = getDatabase();
+    seedDatabase(db, { clean: true, cleanOnly: true });
+
+    broadcaster.broadcast('all', {
+      type: 'TOURNAMENT_RESET',
+      message: 'Tournament has been reset to pristine Day 0 state (0 matches, 0-0 standings)',
+      timestamp: new Date().toISOString(),
+    });
+
+    res.json({
+      success: true,
+      message: 'Tournament has been reset to Day 0: 0 matches, 0-0 cohort standings',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to reset tournament', message: err.message });
+  }
 });

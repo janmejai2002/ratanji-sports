@@ -174,11 +174,11 @@ export const ShareCredentialsModal: React.FC<ShareCredentialsModalProps> = ({
               <h2 className="text-base sm:text-lg font-black uppercase tracking-tight flex items-center gap-2">
                 Sports Committee Sharing &amp; Access
                 <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  DEMO PASSES
+                  OFFICIAL PASSES
                 </span>
               </h2>
               <p className="text-xs opacity-75">
-                Share with XLRI sports committee &amp; referees with pre-configured credentials
+                Share with XLRI sports committee &amp; referees with pre-assigned credentials
               </p>
             </div>
           </div>

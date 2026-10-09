@@ -4,6 +4,7 @@ import type { DatabaseClient } from './client.js';
 
 export interface SeedOptions {
   clean?: boolean;
+  cleanOnly?: boolean;
 }
 
 export function seedDatabase(dbInput: DatabaseSync | DatabaseClient | any, options: SeedOptions = { clean: false }): void {
@@ -312,6 +313,17 @@ export function seedDatabase(dbInput: DatabaseSync | DatabaseClient | any, optio
 
   for (const p of [...seniorPlayers, ...juniorPlayers]) {
     insertPlayer.run(p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], JSON.stringify(p[9]));
+  }
+
+  // If cleanOnly is requested, initialize clean 0-0 standings and skip mock matches/events/audits
+  if (options.cleanOnly) {
+    const insertStanding = db.prepare(`
+      INSERT OR REPLACE INTO standings (cohort_id, played, won, drawn, lost, points_for, points_against, points_diff, total_points)
+      VALUES (?, 0, 0, 0, 0, 0, 0, 0, 0)
+    `);
+    insertStanding.run('cohort-seniors');
+    insertStanding.run('cohort-juniors');
+    return;
   }
 
   // 6. 12 Matches Spanning All Lifecycle States

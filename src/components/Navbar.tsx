@@ -37,8 +37,6 @@ interface NavbarProps {
   soundEnabled: boolean;
   setSoundEnabled: (val: boolean | ((prev: boolean) => boolean)) => void;
   isLiveConnected: boolean;
-  onToggleDemoBar: () => void;
-  isDemoBarOpen: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -53,8 +51,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   soundEnabled,
   setSoundEnabled,
   isLiveConnected,
-  onToggleDemoBar,
-  isDemoBarOpen,
 }) => {
   return (
     <header
@@ -293,25 +289,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
           )}
-
-          {/* Committee Demo Tools Toggle */}
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onToggleDemoBar();
-            }}
-            title="Toggle Sports Committee Presentation Tools (Live Simulator, DB Reset, Wi-Fi Link)"
-            className={`p-1.5 px-2 rounded-lg border font-bold flex items-center gap-1 text-xs transition-transform active:scale-90 ${
-              isDemoBarOpen
-                ? 'bg-amber-500 text-black border-amber-600 shadow'
-                : sunlightMode
-                ? 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
-                : 'bg-slate-900 text-amber-300 border-slate-800 hover:border-amber-400/50'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline text-[11px]">Demo Mode</span>
-          </button>
 
           {/* Sunlight Mode Toggle */}
           <button

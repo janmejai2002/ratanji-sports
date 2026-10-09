@@ -92,7 +92,8 @@ export function startServer(port: number = 3001): Promise<Server> {
       initSchema(client);
       const cohortCount = client.queryOne<{ cnt: number }>('SELECT count(*) as cnt FROM cohorts');
       if (!cohortCount || cohortCount.cnt === 0) {
-        seedDatabase(client, { clean: true });
+        const isClean = process.env.NODE_ENV === 'production' || process.env.CLEAN_TOURNAMENT === 'true';
+        seedDatabase(client, { clean: true, cleanOnly: isClean });
       }
     } catch (err) {
       console.error('[Ratanjee Sports] Database initialization warning:', err);

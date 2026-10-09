@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar, type UserSession } from './components/Navbar';
-import { DemoBanner } from './components/DemoBanner';
 import { LoginModal, type AuthenticatedUser } from './components/LoginModal';
 import { MatchCenter } from './components/MatchCenter';
 import { ContingentTab } from './components/ContingentTab';
@@ -17,12 +16,10 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [loginInitialTab, setLoginInitialTab] = useState<'referee' | 'committee'>('committee');
-  const [isDemoBarOpen, setIsDemoBarOpen] = useState<boolean>(false);
 
   const [sunlightMode, setSunlightMode] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isLiveConnected, setIsLiveConnected] = useState<boolean>(true);
-  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   const [matches, setMatches] = useState<any[]>([]);
   const [standings, setStandings] = useState<any[]>([]);
@@ -42,46 +39,6 @@ export default function App() {
       })
       .catch(() => {});
   }, [currentUser]);
-
-  // Handle one-click demo simulation event
-  const handleSimulateEvent = useCallback(async () => {
-    try {
-      const res = await api.post('/api/demo/simulate', {}, currentUser.role, currentUser.id);
-      loadData();
-      if (res?.event?.event_type === 'GOAL') {
-        sounds.playGoalHorn();
-        sounds.playCheer();
-      } else if (res?.event?.event_type === 'RED_CARD' || res?.event?.event_type === 'YELLOW_CARD') {
-        sounds.playWhistle();
-      } else {
-        sounds.playClick(800);
-      }
-    } catch (e) {
-      console.error('Simulation error:', e);
-    }
-  }, [loadData, currentUser]);
-
-  // Periodic simulation loop when toggle is active
-  useEffect(() => {
-    if (!isSimulating) return;
-    handleSimulateEvent();
-    const interval = setInterval(() => {
-      handleSimulateEvent();
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [isSimulating, handleSimulateEvent]);
-
-  // Handle demo state reset to pristine tournament seed
-  const handleResetDemo = useCallback(async () => {
-    try {
-      setIsSimulating(false);
-      await api.post('/api/demo/reset', {}, currentUser.role, currentUser.id);
-      sounds.playWhistle();
-      loadData();
-    } catch (e) {
-      console.error('Reset demo error:', e);
-    }
-  }, [loadData, currentUser]);
 
   // Handle privileged login completion
   const handleLoginSuccess = (user: AuthenticatedUser) => {
@@ -146,25 +103,6 @@ export default function App() {
           : 'bg-slate-950 text-slate-100 stadium-glow'
       }`}
     >
-      {/* Sports Committee Guided Demo Controls (Toggleable) */}
-      <DemoBanner
-        isOpen={isDemoBarOpen}
-        onClose={() => setIsDemoBarOpen(false)}
-        currentUser={currentUser}
-        onSwitchSession={(switched) => {
-          setCurrentUser(switched);
-          setIsAuthenticated(switched.role !== 'spectator');
-        }}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onSimulateEvent={handleSimulateEvent}
-        isSimulating={isSimulating}
-        setIsSimulating={setIsSimulating}
-        onResetDemo={handleResetDemo}
-        sunlightMode={sunlightMode}
-        localIp="10.1.57.20"
-      />
-
       {/* Top Navigation Bar with Base Screen Header & Login Action */}
       <Navbar
         activeTab={activeTab}
@@ -181,8 +119,6 @@ export default function App() {
         soundEnabled={soundEnabled}
         setSoundEnabled={setSoundEnabled}
         isLiveConnected={isLiveConnected}
-        onToggleDemoBar={() => setIsDemoBarOpen((prev) => !prev)}
-        isDemoBarOpen={isDemoBarOpen}
       />
 
       {/* Main Base Container with Mobile Bottom Nav Clearance */}

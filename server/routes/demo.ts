@@ -33,6 +33,30 @@ demoRouter.post('/reset', (_req: Request, res: Response) => {
 });
 
 /**
+ * POST /api/demo/clean
+ * Resets tournament to Day 0 (0 matches, 0-0 standings).
+ */
+demoRouter.post('/clean', (_req: Request, res: Response) => {
+  try {
+    const db = getDatabase();
+    seedDatabase(db, { clean: true, cleanOnly: true });
+
+    broadcaster.broadcast('all', {
+      type: 'TOURNAMENT_RESET',
+      message: 'Tournament has been reset to pristine Day 0 state (0 matches, 0-0 standings)',
+      timestamp: new Date().toISOString(),
+    });
+
+    res.json({
+      success: true,
+      message: 'Tournament has been reset to Day 0: 0 matches, 0-0 cohort standings',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to clean tournament', message: err.message });
+  }
+});
+
+/**
  * POST /api/demo/simulate
  * Simulates a realistic live sport scoring event on an active match (Futsal or Badminton).
  */

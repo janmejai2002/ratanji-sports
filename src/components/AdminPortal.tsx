@@ -86,6 +86,25 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [notification, setNotification] = useState<string>('');
   const [copiedRefId, setCopiedRefId] = useState<string | null>(null);
 
+  // Clean Slate Tournament Reset State
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetTournament = async () => {
+    setIsResetting(true);
+    try {
+      await api.post('/api/admin/verifications/reset-tournament', {}, 'admin');
+      sounds.playWhistle();
+      onRefresh();
+      setIsResetConfirmOpen(false);
+      setNotification('Tournament successfully reset to pristine Day 0 state (0 matches, 0-0 standings).');
+    } catch (err: any) {
+      alert('Failed to reset tournament: ' + err.message);
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   // Load dynamic sports catalog
   const loadSports = async () => {
     try {
@@ -409,6 +428,19 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           >
             <Plus className="w-4 h-4" />
             + New Match
+          </button>
+
+          {/* Reset Tournament (Clean Slate) Button */}
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setIsResetConfirmOpen(true);
+            }}
+            className="flex-1 md:flex-none py-2 px-3 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+            title="Wipe demo data and reset tournament to pristine Day 0 (0 matches, 0-0 standings)"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-red-400" />
+            Reset to Day 0
           </button>
         </div>
       </div>
@@ -1346,6 +1378,47 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
         match={selectedMatchForShare}
         sunlightMode={sunlightMode}
       />
+
+      {/* MODAL 6: Reset Tournament Confirmation Modal */}
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+          <div
+            className={`w-full max-w-md rounded-2xl border p-6 relative shadow-2xl ${
+              sunlightMode ? 'bg-white border-slate-900 text-slate-950' : 'bg-slate-900 border-red-500/40 text-slate-100'
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-3 text-red-400 font-bold text-xs uppercase tracking-wider">
+              <RotateCcw className="w-4 h-4" />
+              Tournament Reset
+            </div>
+            <h3 className="text-lg font-black tracking-tight mb-2">
+              Reset Tournament to Clean Day 0 State?
+            </h3>
+            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+              This will permanently delete all mock matches, live scorecards, match events, and audit logs, and reset the Senior vs Junior standings to 0-0.
+              <br /><br />
+              <strong className="text-emerald-400">Preserved:</strong> All 15 official sports, certified referee accounts, and contingent player rosters will remain intact so you can immediately begin scheduling real fixtures.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="py-2.5 px-4 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isResetting}
+                onClick={handleResetTournament}
+                className="py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-black shadow-lg shadow-red-600/30 transition active:scale-95 flex items-center gap-1.5"
+              >
+                {isResetting ? 'Resetting...' : 'Yes, Reset to Clean Slate'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
