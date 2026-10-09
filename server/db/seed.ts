@@ -491,7 +491,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const client = getDatabase();
     console.log('Initializing schema if not exists...');
     initSchema(client);
-    console.log('Seeding Ratanji Sports Database...');
+    console.log('Seeding Ratanjee Sports Database...');
     seedDatabase(client, { clean: true });
     console.log('Seeding completed successfully!');
   })().catch((err) => {

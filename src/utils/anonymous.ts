@@ -11,11 +11,11 @@ export interface AnonymousUser {
   badge: string;
 }
 
-const STORAGE_KEY = 'ratanji_anon_user_session';
+const STORAGE_KEY = 'ratanjee_anon_user_session';
 
 export function getOrCreateAnonymousUser(): AnonymousUser {
   try {
-    const cached = localStorage.getItem(STORAGE_KEY);
+    const cached = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('ratanji_anon_user_session');
     if (cached) {
       const parsed = JSON.parse(cached);
       if (parsed && parsed.id && parsed.role === 'spectator') {

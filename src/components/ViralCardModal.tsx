@@ -36,7 +36,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
     ? `DEADLOCK AT XLRI! ${match.home_cohort_name} and ${match.away_cohort_name} split the spoils in ${match.sport_name}! ⚔️🔥`
     : `${winner.toUpperCase()} JUST COOKED ${loser.toUpperCase()} ${Math.max(match.score_home, match.score_away)}-${Math.min(match.score_home, match.score_away)} IN ${match.sport_name.toUpperCase()}! 💀🔥`;
 
-  const storyText = `🏆 RATANJI 2026 | XLRI DELHI\n⚡ ${match.sport_name} Championship\n\n${savageHeadline}\n\n📍 Venue: ${match.venue || 'XLRI Grounds'}\n📊 Final Score: ${match.home_cohort_name} ${match.score_home} - ${match.score_away} ${match.away_cohort_name}\n\nLive scores & banter: https://ratanji.xlri.ac.in`;
+  const storyText = `🏆 RATANJEE 2026 | XLRI DELHI\n⚡ ${match.sport_name} Championship\n\n${savageHeadline}\n\n📍 Venue: ${match.venue || 'XLRI Grounds'}\n📊 Final Score: ${match.home_cohort_name} ${match.score_home} - ${match.score_away} ${match.away_cohort_name}\n\nLive scores & banter: https://ratanjee.xlri.ac.in`;
 
   const copyToClipboard = () => {
     sounds.playClick(1200);
@@ -78,7 +78,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
         >
           <div className="flex justify-between items-center mb-3">
             <span className="text-[11px] font-black tracking-widest uppercase px-2 py-0.5 rounded bg-amber-500 text-black">
-              RATANJI 2026 &bull; XLRI DELHI
+              RATANJEE 2026 &bull; XLRI DELHI
             </span>
             <span className="text-xs font-mono font-bold text-slate-400">
               {match.sport_name.toUpperCase()}
@@ -115,7 +115,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
           <div className="mt-4 flex items-center justify-between text-xs text-slate-400 font-medium">
             <span>📍 {match.venue || 'Main Sports Complex'}</span>
             <span className="flex items-center gap-1 text-amber-400 font-bold">
-              <Sparkles className="w-3.5 h-3.5" /> Official Ratanji Verified Result
+              <Sparkles className="w-3.5 h-3.5" /> Official Ratanjee Verified Result
             </span>
           </div>
         </div>
@@ -135,7 +135,7 @@ export const ViralCardModal: React.FC<ViralCardModalProps> = ({
               sounds.playClick();
               if (navigator.share) {
                 navigator.share({
-                  title: `Ratanji 2026: ${match.sport_name}`,
+                  title: `Ratanjee 2026: ${match.sport_name}`,
                   text: storyText,
                   url: window.location.href,
                 }).catch(() => {});

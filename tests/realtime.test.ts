@@ -51,7 +51,7 @@ describe('Real-Time Broadcast Propagation (WebSocket & SSE)', () => {
       );
       expect(greeting).toBeDefined();
       expect(greeting.type).toBe('connected');
-      expect(greeting.message).toBe('Ratanji Live Broadcaster ready');
+      expect(greeting.message).toBe('Ratanjee Live Broadcaster ready');
     } finally {
       wsClient.close();
     }

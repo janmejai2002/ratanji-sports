@@ -59,7 +59,11 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
   // Match Pinning State (persisted in localStorage)
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem('ratanji_pinned_matches') || '[]');
+      return JSON.parse(
+        localStorage.getItem('ratanjee_pinned_matches') ||
+        localStorage.getItem('ratanji_pinned_matches') ||
+        '[]'
+      );
     } catch {
       return [];
     }
@@ -72,7 +76,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
       : [...pinnedIds, matchId];
     setPinnedIds(updated);
     try {
-      localStorage.setItem('ratanji_pinned_matches', JSON.stringify(updated));
+      localStorage.setItem('ratanjee_pinned_matches', JSON.stringify(updated));
     } catch {}
   };
 
@@ -361,7 +365,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
               <h2 className="text-base font-black uppercase tracking-tight text-white flex items-center gap-1.5">
                 XLRI DELHI ANNUAL SPORTS FESTIVAL 2026
                 <InfoTooltip
-                  title="Ratanji Memorial Trophy 2026"
+                  title="Ratanjee Memorial Trophy 2026"
                   content="Annual inter-batch tournament between Batch of 2026 (Seniors) and Batch of 2027 (Juniors) across 15+ sporting events."
                   sunlightMode={sunlightMode}
                 />
@@ -477,6 +481,7 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                     sounds.playClick();
                     setPinnedIds([]);
                     try {
+                      localStorage.removeItem('ratanjee_pinned_matches');
                       localStorage.removeItem('ratanji_pinned_matches');
                     } catch {}
                   }}

@@ -308,13 +308,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     sounds.playClick();
     const portalUrl = window.location.origin || 'http://10.1.57.20:5173';
     const text =
-      `🏆 *XLRI Ratanji 2026 Memorial Trophy - Referee Access Pass*\n\n` +
+      `🏆 *XLRI Ratanjee 2026 Memorial Trophy - Referee Access Pass*\n\n` +
       `👤 *Official:* ${ref.name}\n` +
       `🔑 *Referee ID Pass:* \`${ref.code}\`\n` +
       `🏅 *Specialty:* ${ref.sport_specialty || 'General Sports'}\n` +
       `📋 *Assigned Fixtures:* ${ref.assigned_matches_count || 0}\n\n` +
       `👉 *Live Scoring Instructions:*\n` +
-      `1. Open Ratanji Portal: ${portalUrl}\n` +
+      `1. Open Ratanjee Portal: ${portalUrl}\n` +
       `2. Click *"Referee Access"* on the top navigation bar\n` +
       `3. Enter your ID: *${ref.code}* to unlock live scoring controls!\n\n` +
       `_Issued by XLRI Delhi Sports Committee_`;
@@ -361,12 +361,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               </h1>
               <InfoTooltip
                 title="Sports Committee Administration"
-                content="Governs the Ratanji 2026 Memorial Trophy. Committee members have full administrative authority to schedule fixtures, assign certified referees, register new sports events, approve rosters, and verify submitted scorecards before official publication to campus standings."
+                content="Governs the Ratanjee 2026 Memorial Trophy. Committee members have full administrative authority to schedule fixtures, assign certified referees, register new sports events, approve rosters, and verify submitted scorecards before official publication to campus standings."
                 sunlightMode={sunlightMode}
               />
             </div>
             <p className="text-xs text-slate-400">
-              Ratanji 2026 Memorial Trophy &bull; XLRI Delhi Tournament Operations
+              Ratanjee 2026 Memorial Trophy &bull; XLRI Delhi Tournament Operations
             </p>
           </div>
         </div>
@@ -787,7 +787,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 />
               </div>
               <p className="text-xs text-slate-400">
-                Official tournament umpires and certified match arbiters for Ratanji 2026.
+                Official tournament umpires and certified match arbiters for Ratanjee 2026.
               </p>
             </div>
 
@@ -1023,7 +1023,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           <div className="flex items-center justify-between">
             <h2 className="text-base font-black uppercase tracking-wider flex items-center gap-2">
               <Trophy className="w-4 h-4 text-amber-400" />
-              Ratanji 2026 Memorial Trophy &bull; Cohort Championship Standings
+              Ratanjee 2026 Memorial Trophy &bull; Cohort Championship Standings
             </h2>
           </div>
 

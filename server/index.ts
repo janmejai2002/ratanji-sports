@@ -95,7 +95,7 @@ export function startServer(port: number = 3001): Promise<Server> {
         seedDatabase(client, { clean: true });
       }
     } catch (err) {
-      console.error('[Ratanji Sports] Database initialization warning:', err);
+      console.error('[Ratanjee Sports] Database initialization warning:', err);
     }
 
     const onError = (err: any) => {
@@ -112,7 +112,7 @@ export function startServer(port: number = 3001): Promise<Server> {
     const onListening = () => {
       cleanup();
       isListening = true;
-      console.log(`[Ratanji Sports] Server listening on http://localhost:${port}`);
+      console.log(`[Ratanjee Sports] Server listening on http://localhost:${port}`);
       resolve(server);
     };
 

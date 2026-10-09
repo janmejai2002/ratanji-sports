@@ -1,4 +1,4 @@
-# Ratanji Sports — Digital Sports Management & Scoring System
+# Ratanjee Sports — Digital Sports Management & Scoring System
 
 A full-stack, real-time sports tournament management and digital scoring system built for XLRI Delhi tournaments and multi-sport competitions.
 

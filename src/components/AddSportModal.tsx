@@ -89,7 +89,7 @@ export const AddSportModal: React.FC<AddSportModalProps> = ({
         </h3>
 
         <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-          Configure a new sporting event for Ratanji 2026. It will automatically become available for scheduling, scoring, and contingent rosters.
+          Configure a new sporting event for Ratanjee 2026. It will automatically become available for scheduling, scoring, and contingent rosters.
         </p>
 
         {error && (

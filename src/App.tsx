@@ -261,7 +261,7 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
-            RATANJI 2026 &bull; Digital Sports Management System &bull; XLRI Delhi Sports Committee
+            RATANJEE 2026 &bull; Digital Sports Management System &bull; XLRI Delhi Sports Committee
           </span>
           <span className="font-mono text-[11px] text-amber-500 font-bold">
             High-Contrast Sunlight &amp; Dark Stadium Mode Active

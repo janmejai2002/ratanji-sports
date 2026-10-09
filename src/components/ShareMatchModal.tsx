@@ -33,7 +33,7 @@ export const ShareMatchModal: React.FC<ShareMatchModalProps> = ({
 
   // WhatsApp formatted message with emojis and clear status
   const whatsappMessage = 
-`🏆 *XLRI DELHI RATANJI 2026 • LIVE MATCH UPDATE*
+`🏆 *XLRI DELHI RATANJEE 2026 • LIVE MATCH UPDATE*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⚡ *${sportName.toUpperCase()}*
 ⚔️ *Seniors '26* [ ${homeScore} - ${awayScore} ] *Juniors '27*
@@ -43,7 +43,7 @@ export const ShareMatchModal: React.FC<ShareMatchModalProps> = ({
 📲 *Track live ball-by-ball / point-by-point updates:*
 ${trackingLink}
 
-#Ratanji2026 #XLRI #SeniorsVsJuniors #SportsCommittee`;
+#Ratanjee2026 #XLRI #SeniorsVsJuniors #SportsCommittee`;
 
   const handleShareWhatsApp = () => {
     sounds.playGoalHorn();

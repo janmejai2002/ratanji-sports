@@ -73,7 +73,7 @@ export class RealtimeBroadcaster {
       // Initial connection greeting
       this.safeSend(ws, {
         type: 'connected',
-        message: 'Ratanji Live Broadcaster ready',
+        message: 'Ratanjee Live Broadcaster ready',
         timestamp: new Date().toISOString(),
       });
 
@@ -148,7 +148,7 @@ export class RealtimeBroadcaster {
     // Initial SSE greeting
     const greeting = JSON.stringify({
       type: 'connected',
-      message: 'Ratanji SSE stream connected',
+      message: 'Ratanjee SSE stream connected',
       clientId,
       timestamp: new Date().toISOString(),
     });

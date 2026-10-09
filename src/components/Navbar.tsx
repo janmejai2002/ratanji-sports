@@ -83,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-display font-black italic tracking-tighter text-xl uppercase flex items-center gap-1.5">
-                  RATANJI <span className={sunlightMode ? 'text-amber-600' : 'text-amber-400'}>'26</span>
+                  RATANJEE <span className={sunlightMode ? 'text-amber-600' : 'text-amber-400'}>'26</span>
                 </span>
                 <span
                   className={`text-[9px] uppercase tracking-widest font-black px-2 py-0.5 rounded border transform -skew-x-6 ${

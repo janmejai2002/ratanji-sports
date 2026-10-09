@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ratanji-sports
+    name: ratanjee-sports
     env: node
     plan: free
     region: oregon
