@@ -60,39 +60,39 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-slate-950/95 border-slate-800 text-slate-100 backdrop-blur'
       }`}
     >
-      {/* Mario Kart / Grand Prix Racing Checkered Micro-Ribbon */}
-      <div className="h-1 w-full racing-checkers-gold opacity-80" />
+      {/* Sleek hairline executive gradient line */}
+      <div className="h-0.5 w-full bg-gradient-to-r from-blue-500 via-amber-400 to-emerald-500 opacity-70" />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-2.5 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
         {/* Brand & Badge */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-xl border flex items-center justify-center shadow-nb-sm transform -skew-x-6 ${
+              className={`p-2 rounded-xl border flex items-center justify-center transition-all ${
                 sunlightMode
                   ? 'bg-amber-400 border-slate-950 text-slate-950 font-black'
-                  : 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                  : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
               }`}
             >
-              <Trophy className="w-5 h-5 transform skew-x-6" />
+              <Trophy className="w-5 h-5 text-amber-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-display font-black italic tracking-tighter text-xl uppercase flex items-center gap-1.5">
+                <span className="font-sans font-black tracking-tight text-xl uppercase flex items-center gap-1.5 text-white">
                   RATANJEE <span className={sunlightMode ? 'text-amber-600' : 'text-amber-400'}>'26</span>
                 </span>
                 <span
-                  className={`text-[9px] uppercase tracking-widest font-black px-2 py-0.5 rounded border transform -skew-x-6 ${
+                  className={`text-[9px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full border ${
                     sunlightMode
                       ? 'bg-slate-900 text-white border-slate-900'
-                      : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : 'bg-white/5 text-slate-300 border-white/10'
                   }`}
                 >
-                  <span className="inline-block skew-x-6">XLRI DELHI</span>
+                  XLRI DELHI
                 </span>
               </div>
-              <p className={`text-[10px] font-bold tracking-tight uppercase ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                Arcade Grand Prix &bull; Live Scoring Engine
+              <p className={`text-[10px] font-medium tracking-tight uppercase ${sunlightMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                Annual Sports Festival &bull; Live Tournament Intelligence
               </p>
             </div>
           </div>
@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Navigation Tabs (Hidden on Mobile, handled by MobileBottomNav) */}
         <nav
           className={`hidden md:flex items-center p-1 rounded-xl border gap-1 w-full md:w-auto overflow-x-auto ${
-            sunlightMode ? 'bg-slate-100 border-slate-300' : 'bg-slate-900/90 border-slate-800'
+            sunlightMode ? 'bg-slate-100 border-slate-300' : 'bg-slate-900/70 border-white/[0.08] backdrop-blur-md'
           }`}
         >
           {/* 1. Match Center (Public Base View) */}
@@ -122,17 +122,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               sounds.playClick();
               setActiveTab('matchCenter');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
               activeTab === 'matchCenter'
                 ? sunlightMode
-                  ? 'bg-slate-950 text-white shadow'
-                  : 'bg-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                  ? 'bg-slate-950 text-white font-bold shadow-sm'
+                  : 'bg-white text-slate-950 font-bold shadow-sm'
                 : sunlightMode
-                ? 'text-slate-700 hover:text-slate-950'
-                : 'text-slate-400 hover:text-white'
+                ? 'text-slate-700 hover:text-slate-950 hover:bg-black/5'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Activity className="w-3.5 h-3.5" />
+            <Activity className="w-3.5 h-3.5 text-amber-500" />
             Match Center
           </button>
 
@@ -142,17 +142,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               sounds.playClick();
               setActiveTab('contingent');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
               activeTab === 'contingent'
                 ? sunlightMode
-                  ? 'bg-slate-950 text-white shadow'
-                  : 'bg-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                  ? 'bg-slate-950 text-white font-bold shadow-sm'
+                  : 'bg-white text-slate-950 font-bold shadow-sm'
                 : sunlightMode
-                ? 'text-slate-700 hover:text-slate-950'
-                : 'text-slate-400 hover:text-white'
+                ? 'text-slate-700 hover:text-slate-950 hover:bg-black/5'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Users className="w-3.5 h-3.5" />
+            <Users className="w-3.5 h-3.5 text-blue-400" />
             Contingents
           </button>
 
@@ -163,14 +163,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 sounds.playClick();
                 setActiveTab('referee');
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
                 activeTab === 'referee'
                   ? sunlightMode
-                    ? 'bg-slate-950 text-white shadow'
-                    : 'bg-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                    ? 'bg-slate-950 text-white font-bold shadow-sm'
+                    : 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
                   : sunlightMode
-                  ? 'text-slate-700 hover:text-slate-950'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'text-slate-700 hover:text-slate-950 hover:bg-black/5'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Clock className="w-3.5 h-3.5 text-emerald-400" />
@@ -185,14 +185,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 sounds.playClick();
                 setActiveTab('admin');
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap active:scale-95 ${
                 activeTab === 'admin'
                   ? sunlightMode
-                    ? 'bg-slate-950 text-white shadow'
-                    : 'bg-amber-500 text-black font-extrabold shadow-lg shadow-amber-500/20'
+                    ? 'bg-slate-950 text-white font-bold shadow-sm'
+                    : 'bg-amber-400 text-slate-950 font-bold shadow-sm'
                   : sunlightMode
-                  ? 'text-slate-700 hover:text-slate-950'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'text-slate-700 hover:text-slate-950 hover:bg-black/5'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Shield className="w-3.5 h-3.5 text-amber-400" />
