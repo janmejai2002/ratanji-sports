@@ -371,13 +371,17 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                 />
               </h2>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                DAY 3
+                LIVE FESTIVAL
               </span>
             </div>
             <p className="text-xs text-slate-400 flex items-center gap-1">
               <span>Championship Leaderboard:</span>
-              <span className="text-blue-400 font-bold">Seniors 7 Pts</span> &bull;{' '}
-              <span className="text-emerald-400 font-bold">Juniors 4 Pts</span>
+              <span className="text-blue-400 font-bold">
+                Seniors {Array.isArray(standings) ? (standings.find((s: any) => s.cohort_id === 'cohort-seniors' || s.cohort_name === 'Seniors')?.total_points ?? 0) : 0} Pts
+              </span> &bull;{' '}
+              <span className="text-red-400 font-bold">
+                Juniors {Array.isArray(standings) ? (standings.find((s: any) => s.cohort_id === 'cohort-juniors' || s.cohort_name === 'Juniors')?.total_points ?? 0) : 0} Pts
+              </span>
               <InfoTooltip
                 title="Points System"
                 content="Win = 3 points, Draw = 1 point, Loss = 0 points. Head-to-head points differential is the primary tiebreaker."
@@ -652,39 +656,34 @@ export const MatchCenter: React.FC<MatchCenterProps> = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 font-mono">
-                <tr className="bg-blue-950/20">
-                  <td className="py-3 px-3 font-bold text-white flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-amber-500 text-black text-[10px] font-black flex items-center justify-center">
-                      1
-                    </span>
-                    <span className="text-blue-400 font-sans font-black">Seniors (Batch 2026)</span>
-                  </td>
-                  <td className="py-3 px-3 text-center">4</td>
-                  <td className="py-3 px-3 text-center text-emerald-400 font-bold">2</td>
-                  <td className="py-3 px-3 text-center text-slate-400">1</td>
-                  <td className="py-3 px-3 text-center text-red-400">1</td>
-                  <td className="py-3 px-3 text-center">75</td>
-                  <td className="py-3 px-3 text-center">77</td>
-                  <td className="py-3 px-3 text-center text-slate-400">-2</td>
-                  <td className="py-3 px-3 text-right font-black text-amber-400 text-base">7</td>
-                </tr>
-
-                <tr className="bg-emerald-950/20">
-                  <td className="py-3 px-3 font-bold text-white flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-slate-700 text-white text-[10px] font-black flex items-center justify-center">
-                      2
-                    </span>
-                    <span className="text-emerald-400 font-sans font-black">Juniors (Batch 2027)</span>
-                  </td>
-                  <td className="py-3 px-3 text-center">4</td>
-                  <td className="py-3 px-3 text-center text-emerald-400 font-bold">1</td>
-                  <td className="py-3 px-3 text-center text-slate-400">1</td>
-                  <td className="py-3 px-3 text-center text-red-400">2</td>
-                  <td className="py-3 px-3 text-center">77</td>
-                  <td className="py-3 px-3 text-center">75</td>
-                  <td className="py-3 px-3 text-center text-emerald-400">+2</td>
-                  <td className="py-3 px-3 text-right font-black text-slate-300 text-base">4</td>
-                </tr>
+                {(Array.isArray(standings) && standings.length > 0 ? standings : [
+                  { cohort_name: 'Seniors (Batch 2026)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-seniors' },
+                  { cohort_name: 'Juniors (Batch 2027)', played: 0, won: 0, drawn: 0, lost: 0, points_for: 0, points_against: 0, points_diff: 0, total_points: 0, cohort_id: 'cohort-juniors' },
+                ]).map((s: any, idx: number) => {
+                  const isSenior = s.cohort_id === 'cohort-seniors' || String(s.cohort_name || s.cohort).includes('Senior');
+                  return (
+                    <tr key={s.cohort_id || idx} className={isSenior ? 'bg-blue-950/20' : 'bg-red-950/20'}>
+                      <td className="py-3 px-3 font-bold text-white flex items-center gap-2">
+                        <span className={`w-5 h-5 rounded-full ${idx === 0 ? 'bg-amber-500 text-black' : 'bg-slate-700 text-white'} text-[10px] font-black flex items-center justify-center`}>
+                          {idx + 1}
+                        </span>
+                        <span className={`font-sans font-black ${isSenior ? 'text-blue-400' : 'text-red-400'}`}>
+                          {s.cohort_name || s.name || (isSenior ? 'Seniors (Batch 2026)' : 'Juniors (Batch 2027)')}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-center">{s.played ?? 0}</td>
+                      <td className="py-3 px-3 text-center text-emerald-400 font-bold">{s.won ?? 0}</td>
+                      <td className="py-3 px-3 text-center text-slate-400">{s.drawn ?? 0}</td>
+                      <td className="py-3 px-3 text-center text-red-400">{s.lost ?? 0}</td>
+                      <td className="py-3 px-3 text-center">{s.points_for ?? 0}</td>
+                      <td className="py-3 px-3 text-center">{s.points_against ?? 0}</td>
+                      <td className="py-3 px-3 text-center text-slate-400">{s.points_diff ?? 0}</td>
+                      <td className={`py-3 px-3 text-right font-black ${idx === 0 ? 'text-amber-400' : 'text-slate-300'} text-base`}>
+                        {s.total_points ?? 0}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
