@@ -1,0 +1,441 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Shield,
+  Clock,
+  LogIn,
+  Key,
+  Eye,
+  EyeOff,
+  Copy,
+  Check,
+  Info,
+  Lock,
+  ChevronRight,
+  UserCheck,
+  Zap,
+  Radio
+} from 'lucide-react';
+import { sounds } from '../utils/audio';
+import { api } from '../utils/api';
+
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'referee' | 'spectator';
+  badge: string;
+  code?: string;
+}
+
+interface LoginModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  sunlightMode: boolean;
+  onLoginSuccess: (user: AuthenticatedUser) => void;
+  initialTab?: 'referee' | 'committee';
+}
+
+export const COMMITTEE_PRESETS = [
+  {
+    id: 'usr-admin-1',
+    role: 'admin' as const,
+    name: 'Sports Committee Admin',
+    email: 'admin@xlri.edu',
+    password: 'xlri-admin-2026',
+    badge: 'Committee Executive',
+    description: 'Full tournament control: audit submissions, 1-click verify & publish scores to official standings, and schedule matches.',
+    icon: Shield,
+    color: 'amber',
+  },
+];
+
+export const REFEREE_PRESETS = [
+  {
+    id: 'usr-ref-1',
+    code: 'REF-023',
+    name: 'Rohan Verma',
+    specialty: 'Football & Futsal',
+    badge: 'Official Referee (REF-023)',
+  },
+  {
+    id: 'usr-ref-2',
+    code: 'REF-045',
+    name: 'Pooja Sharma',
+    specialty: 'Basketball & Volleyball',
+    badge: 'Official Referee (REF-045)',
+  },
+  {
+    id: 'usr-ref-3',
+    code: 'REF-012',
+    name: 'Amitabh Sen',
+    specialty: 'Racquet Sports & Cricket',
+    badge: 'Official Referee (REF-012)',
+  },
+];
+
+export const LoginModal: React.FC<LoginModalProps> = ({
+  isOpen,
+  onClose,
+  sunlightMode,
+  onLoginSuccess,
+  initialTab = 'referee',
+}) => {
+  const [tab, setTab] = useState<'referee' | 'committee'>(initialTab);
+  const [refereeCode, setRefereeCode] = useState('REF-023');
+  const [refereesList, setRefereesList] = useState<any[]>(REFEREE_PRESETS);
+
+  // Committee credentials
+  const [email, setEmail] = useState('admin@xlri.edu');
+  const [password, setPassword] = useState('xlri-admin-2026');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [copiedPassId, setCopiedPassId] = useState<string | null>(null);
+
+  // Sync initial tab when reopened
+  useEffect(() => {
+    if (isOpen) {
+      setTab(initialTab);
+      setErrorMessage(null);
+      // Fetch live referees from server
+      fetch('/api/referees')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setRefereesList(data);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen, initialTab]);
+
+  if (!isOpen) return null;
+
+  // Direct Referee Login via ID/Code
+  const handleRefereeLogin = async (codeToUse?: string) => {
+    const code = (codeToUse || refereeCode).trim();
+    if (!code) {
+      setErrorMessage('Please enter your Referee ID or official code.');
+      return;
+    }
+
+    setErrorMessage(null);
+    setIsLoading(true);
+
+    try {
+      const res = await api.post('/api/referees/login', {
+        code_or_id: code,
+      });
+
+      sounds.playWhistle();
+      onLoginSuccess(res.user);
+      onClose();
+    } catch (err: any) {
+      sounds.playClick(300);
+      setErrorMessage(err.message || `Referee ID "${code}" not found. Please verify with Sports Committee.`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Committee Admin Login
+  const handleCommitteeLogin = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setErrorMessage(null);
+    setIsLoading(true);
+
+    try {
+      const res = await api.post('/api/auth/login', {
+        email: email.trim(),
+        password: password.trim(),
+      });
+
+      sounds.playWhistle();
+      onLoginSuccess(res.user);
+      onClose();
+    } catch (err: any) {
+      sounds.playClick(300);
+      setErrorMessage(err.message || 'Invalid committee credentials. Please check your username/password.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyPassword = (id: string, pass: string) => {
+    sounds.playClick();
+    navigator.clipboard.writeText(pass);
+    setCopiedPassId(id);
+    setTimeout(() => setCopiedPassId(null), 2000);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in"
+      onClick={onClose}
+    >
+      <div
+        className={`w-full max-w-xl max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-2xl border-t sm:border shadow-2xl transition-all pb-safe animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 ${
+          sunlightMode
+            ? 'bg-white border-slate-900 text-slate-950'
+            : 'bg-slate-900 border-amber-500/30 text-slate-100'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Mobile Sheet Grab Bar */}
+        <div className="w-12 h-1.5 rounded-full bg-slate-600/60 mx-auto mt-2.5 mb-1 sm:hidden" />
+        {/* Header */}
+        <div
+          className={`sticky top-0 z-10 px-6 py-4 border-b flex items-center justify-between ${
+            sunlightMode ? 'bg-slate-100 border-slate-300' : 'bg-slate-950 border-slate-800'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <span className="p-2 rounded-xl bg-amber-500 text-black font-black flex items-center justify-center shadow-md">
+              <Lock className="w-5 h-5" />
+            </span>
+            <div>
+              <h2 className="text-base sm:text-lg font-black uppercase tracking-tight flex items-center gap-2">
+                Official Tournament Sign In
+              </h2>
+              <p className="text-xs opacity-75">
+                Referee Access &bull; Sports Committee Executive Console
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onClose();
+            }}
+            className="p-1.5 rounded-lg hover:bg-black/10 text-slate-400 hover:text-white transition font-bold"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Tab Switcher: Referee vs Committee */}
+        <div className="px-6 pt-4">
+          <div className="flex rounded-xl bg-black/40 border border-white/10 p-1 gap-1">
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setTab('referee');
+                setErrorMessage(null);
+              }}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-black transition flex items-center justify-center gap-1.5 ${
+                tab === 'referee'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Clock className="w-4 h-4 text-emerald-300" />
+              Referee Access (ID Pass)
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setTab('committee');
+                setErrorMessage(null);
+              }}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-black transition flex items-center justify-center gap-1.5 ${
+                tab === 'committee'
+                  ? 'bg-amber-500 text-black shadow-md'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Shield className="w-4 h-4 text-black" />
+              Sports Committee Admin
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-5">
+          {errorMessage && (
+            <div className="p-3 rounded-xl bg-red-950/60 border border-red-500/50 text-red-200 text-xs font-semibold animate-in fade-in">
+              {errorMessage}
+            </div>
+          )}
+
+          {/* TAB 1: REFEREE DIRECT LOGIN */}
+          {tab === 'referee' && (
+            <div className="space-y-4">
+              <div
+                className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 ${
+                  sunlightMode
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                    : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                }`}
+              >
+                <Zap className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="leading-relaxed">
+                  <span className="font-bold">Fast Referee Access:</span> Enter your assigned Referee ID (e.g. <strong className="font-mono">REF-023</strong>) to access the on-field scoring pad for your assigned matches. No password required for verified tournament IDs.
+                </div>
+              </div>
+
+              {/* Referee Code Input Box */}
+              <div className="p-4 rounded-xl bg-black/40 border border-slate-800 space-y-3">
+                <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">
+                  Enter Your Official Referee ID / Code:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={refereeCode}
+                    onChange={(e) => setRefereeCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. REF-023"
+                    className="flex-1 px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-mono font-bold text-sm tracking-wider uppercase focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    onClick={() => handleRefereeLogin()}
+                    disabled={isLoading}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs shadow-md active:scale-95 transition flex items-center gap-1.5"
+                  >
+                    <LogIn className="w-4 h-4" />
+                    Enter Console
+                  </button>
+                </div>
+              </div>
+
+              {/* 1-Click Referee Roster Picker */}
+              <div className="space-y-2">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
+                  Or 1-Click Pick Certified Referee:
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {refereesList.slice(0, 3).map((ref) => {
+                    const isSelected = refereeCode.toUpperCase() === ref.code?.toUpperCase();
+                    return (
+                      <button
+                        key={ref.id || ref.code}
+                        type="button"
+                        onClick={() => {
+                          sounds.playClick();
+                          setRefereeCode(ref.code);
+                          handleRefereeLogin(ref.code);
+                        }}
+                        className={`text-left p-3 rounded-xl border transition flex flex-col justify-between active:scale-95 ${
+                          isSelected
+                            ? 'bg-emerald-950/60 border-emerald-400 ring-1 ring-emerald-400'
+                            : 'bg-black/30 border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-mono font-black text-emerald-400">
+                              {ref.code}
+                            </span>
+                            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          </div>
+                          <div className="text-xs font-black text-white">{ref.name}</div>
+                          <div className="text-[10px] text-slate-400 truncate">
+                            {ref.sport_specialty || ref.specialty || 'Official'}
+                          </div>
+                        </div>
+                        <div className="mt-2 text-[10px] text-emerald-300 font-bold flex items-center gap-1">
+                          Score Assigned &rarr;
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: SPORTS COMMITTEE ADMIN */}
+          {tab === 'committee' && (
+            <div className="space-y-5">
+              {/* 1-Click Committee Executive Pass */}
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider flex items-center gap-1">
+                    <Shield className="w-3.5 h-3.5" />
+                    Sports Committee Master Pass
+                  </span>
+                  <div className="text-sm font-black text-white mt-0.5">
+                    Sports Committee Admin Executive
+                  </div>
+                  <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                    User: <strong className="text-amber-300">admin@xlri.edu</strong> &bull; Pass: <strong className="text-emerald-400">xlri-admin-2026</strong>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleCommitteeLogin()}
+                  disabled={isLoading}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 whitespace-nowrap"
+                >
+                  <UserCheck className="w-4 h-4" />
+                  1-Click Admin Sign In
+                </button>
+              </div>
+
+              {/* Manual Committee Credentials Form */}
+              <form onSubmit={handleCommitteeLogin} className="space-y-3.5">
+                <div>
+                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    Committee Email or Username
+                  </label>
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@xlri.edu"
+                    className="w-full px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-medium text-xs focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+                    Committee Security Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full px-3.5 py-2.5 rounded-xl border bg-black border-slate-700 text-white font-medium text-xs focus:outline-none focus:border-amber-500 pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Sign In with Committee Credentials
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Public Spectator Notice */}
+          <div
+            className={`p-3 rounded-xl border text-[11px] flex items-center justify-between gap-2 ${
+              sunlightMode
+                ? 'bg-slate-100 border-slate-300 text-slate-700'
+                : 'bg-black/30 border-slate-800 text-slate-400'
+            }`}
+          >
+            <span>Public Spectators browse match scores automatically without login.</span>
+            <span className="font-mono text-amber-400 font-bold">Anonymous Guest</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

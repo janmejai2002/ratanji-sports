@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom tournament scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Racing Checkered Accent Micro-Stripes */
+.racing-checkers {
+  background-image: repeating-conic-gradient(#000000 0% 25%, #ffffff 0% 50%);
+  background-size: 10px 10px;
+}
+
+.racing-checkers-gold {
+  background-image: repeating-conic-gradient(#0f172a 0% 25%, #f59e0b 0% 50%);
+  background-size: 10px 10px;
+}
+
+.racing-checkers-senior {
+  background-image: repeating-conic-gradient(#0f172a 0% 25%, #3b82f6 0% 50%);
+  background-size: 10px 10px;
+}
+
+.racing-checkers-junior {
+  background-image: repeating-conic-gradient(#0f172a 0% 25%, #10b981 0% 50%);
+  background-size: 10px 10px;
+}
+
+/* Arcade 3D Extruded Numerals */
+.arcade-score-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  text-shadow: 2px 2px 0px #000000, 4px 4px 0px rgba(0, 0, 0, 0.4);
+}
+
+/* Tactile Neo-Brutalist Arcade Buttons */
+.arcade-btn {
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  user-select: none;
+  touch-action: manipulation;
+}
+.arcade-btn:hover {
+  transform: translate(-1px, -1px);
+}
+.arcade-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px transparent !important;
+}
+
+/* Stadium Floodlight Ambient Backdrop */
+.stadium-glow {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(37, 99, 235, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 85% 0%, rgba(16, 185, 129, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.05) 0%, transparent 60%);
+}
+
+/* Mobile Safe Areas */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 12px);
+}
